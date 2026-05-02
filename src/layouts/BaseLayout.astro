@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/code.css';
+import { Icon } from 'astro-icon/components';
 
 interface Props {
   title: string;
@@ -28,11 +29,26 @@ const {
     <header>
       <a href="/" class="brand">0mega28</a>
       <nav>
-        <a href="/blog">Blog</a>
-        <a href="https://github.com/0mega28" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://linkedin.com/in/sakshamgupta28" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="/resume.pdf" target="_blank">Resume</a>
-        <a href="mailto:sakshamdam54321@email.com">Email</a>
+        <a href="/blog" >
+            <Icon name="lucide:book-open" size={20} />
+            <span class="nav-label">&nbsp;Blog</span>
+        </a>
+        <a href="https://github.com/0mega28" target="_blank" rel="noopener" aria-label="GitHub" >
+            <Icon name="simple-icons:github" size={20} />
+            <span class="nav-label">&nbsp;GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/sakshamgupta28" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <Icon name="simple-icons:linkedin" size={20} />
+          <span class="nav-label">&nbsp;LinkedIn</span>
+        </a>
+        <a href="/resume.pdf" target="_blank" aria-label="Resume">
+          <Icon name="lucide:file-text" size={20} />
+          <span class="nav-label">&nbsp;Resume</span>
+        </a>
+        <a href="mailto:sakshamdam54321@gmail.com" aria-label="Email">
+          <Icon name="lucide:mail" size={20} />
+          <span class="nav-label">&nbsp;Mail</span>
+        </a>
       </nav>
     </header>
     <main>
@@ -78,9 +94,21 @@ nav a {
   color: var(--color-muted);
   text-decoration: none;
   transition: color 0.15s;
+  display: flex;
+  align-items: center;
 }
 
 nav a:hover { color: var(--color-accent); }
+
+.nav-label {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .nav-label {
+    display: inline;
+  }
+}
 
 main {
   max-width: var(--max-width);

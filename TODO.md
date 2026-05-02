@@ -6,7 +6,7 @@
 - [x] Add resume.pdf to public/
 
 ## Features
-- [ ] Add Icon for linkedin/github/resume/email
+- [x] Add Icon for linkedin/github/resume/email
 - [ ] Content collections setup (schema, series support)
 - [ ] Blog index page (/blog)
 - [ ] Series index page (/blog/[series])
@@ -22,6 +22,7 @@
 - [ ] robots.txt
 - [ ] Manual dark/light mode toggle (respects OS preference, persists via localStorage)
 - [ ] Setup Prettier with astro plugin for consistent formatting
+- [ ] Fix Icon Inconsistensy
 
 ## Performance
 - [ ] Verify fonts load with font-display: swap (no layout shift)
