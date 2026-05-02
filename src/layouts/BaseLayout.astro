@@ -1,0 +1,99 @@
+---
+import '../styles/global.css';
+import '../styles/code.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Deep dives into Java internals, distributed systems, and systems programming."
+} = Astro.props;
+
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <title>{title} · 0mega28</title>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="brand">0mega28</a>
+      <nav>
+        <a href="/blog">Blog</a>
+        <a href="https://github.com/0mega28" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sakshamgupta28" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="/resume.pdf" target="_blank">Resume</a>
+        <a href="mailto:sakshamdam54321@email.com">Email</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>© {new Date().getFullYear()} 0mega28</p>
+    </footer>
+  </body>
+</html>
+
+
+<style>
+header {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 600px) {
+  header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+
+nav a {
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+nav a:hover { color: var(--color-accent); }
+
+main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 0;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+</style>
