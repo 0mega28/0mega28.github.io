@@ -3,44 +3,38 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Home">
-    <article class="home-intro">
-        <h1>Hi, I'm Saksham</h1>
-        <p class="subheadline">Software Engineer · IIT Roorkee CS Grad</p>
+    <article class="home-bio">
+        <h1>Saksham Gupta</h1>
+        <p class="subheadline">Project Lead · Oracle</p>
 
-        <div class="intro-body">
+        <div class="bio-content">
             <p>
-                I am a software engineer interested in the systems underneath our applications. My
-                curiosity usually drives me toward JVM internals, compilers, language runtimes,
-                operating systems, and distributed systems. I like exploring how they are built,
-                where they break, and how they can be optimized.
+                Saksham Gupta is a Project Lead at Oracle, where he leads architecture and
+                development for platform orchestration frameworks, legacy modernization, and
+                performant web technologies. As an IIT Roorkee Computer Science graduate, he focuses
+                on systems programming, language runtimes, and compiler design. Through his work on
+                declarative DSL design and framework-agnostic rendering engines, he has optimized
+                large-scale enterprise services to achieve substantial reductions in CPU usage and
+                API latency.
             </p>
 
             <p>
-                Over the past few years, my exploration has led me to build a few experimental
-                systems from scratch to understand them better:
+                He joined Oracle as a Software Engineer, building the Siebel Open Integration
+                project from proof-of-concept to beta within twelve months, and was subsequently
+                promoted to Senior Software Engineer and Project Lead. He has led the delivery of a
+                recursive JSON-driven web component framework that simplified enterprise UI
+                extensions, and spearheaded Oracle's migration of core reactive systems to Java 21
+                virtual threads. In 2024, his team reached the top six globally in a corporate
+                hackathon on Generative AI out of over one hundred participating teams.
             </p>
 
-            <ul>
-                <li>
-                    <strong>An Operating System from Scratch:</strong> A 32-bit UNIX clone kernel written
-                    in C and x86 Assembly. It has its own bootloader, handles interrupts, keyboard input,
-                    virtual memory, features a basic memory manager, and renders to a VGA display.
-                </li>
-                <li>
-                    <strong>Parsers & Interpreters:</strong> A lightweight, recursive-descent JSON parser
-                    in Java, alongside a self-contained math expression evaluator built using functional
-                    parser-combinator techniques.
-                </li>
-                <li>
-                    <strong>Network & Caching Utilities:</strong> A minimal HTTP proxy server in C++ using
-                    RAII for socket safety, and an implementation playground comparing different caching
-                    strategies and design patterns.
-                </li>
-            </ul>
-
             <p>
-                This blog is where I publish deep dives into topics I have gone deep on. Starting
-                with a series on Java generics internals.
+                He has explored operating systems from scratch, building a custom 32-bit UNIX clone
+                kernel in C and assembly, alongside developing various parsers, caching utilities,
+                and compiler tools. He holds a B.Tech. in Computer Science from the Indian Institute
+                of Technology, Roorkee. Saksham now focuses his time primarily on writing deep dives
+                on systems engineering internals, looking for the best ways to share technical
+                insights about language runtimes and high-performance software architectures.
             </p>
 
             <p class="blog-cta">
@@ -51,39 +45,30 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <style>
-    .home-intro {
+    .home-bio {
         max-width: var(--max-width);
         margin: 0 auto;
     }
 
-    .home-intro h1 {
+    .home-bio h1 {
         font-size: 2.5rem;
         margin-top: 0;
         margin-bottom: 0.5rem;
     }
 
-    .intro-body {
-        margin-top: 2rem;
+    .bio-content {
+        margin-top: 2.5rem;
         font-size: 1.15rem;
         line-height: 1.8;
     }
 
-    .intro-body p {
-        margin-bottom: 1.5rem;
-    }
-
-    .intro-body ul {
+    .bio-content p {
         margin-bottom: 1.8rem;
-        padding-left: 1.5rem;
-    }
-
-    .intro-body li {
-        margin-bottom: 1rem;
-        line-height: 1.7;
+        text-align: justify;
     }
 
     .blog-cta {
-        margin-top: 2.5rem;
+        margin-top: 3rem;
     }
 
     .blog-cta a {
