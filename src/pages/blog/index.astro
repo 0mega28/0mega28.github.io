@@ -137,4 +137,17 @@ function formatDate(date: Date) {
         flex-shrink: 0;
         margin-left: 1rem;
     }
+
+    @media (max-width: 600px) {
+        .post-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.35rem;
+            padding: 0.8rem 0;
+        }
+
+        .post-meta-row {
+            margin-left: 0;
+        }
+    }
 </style>

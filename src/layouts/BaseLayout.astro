@@ -42,7 +42,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet"
         />
         <title>{title} · 0mega28</title>
@@ -81,6 +81,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
                     <Icon name="simple-icons:linkedin" size={20} />
                     <span class="nav-label">&nbsp;LinkedIn</span>
                 </a>
+                <a href="/rss.xml" aria-label="RSS Feed">
+                    <Icon name="lucide:rss" size={20} />
+                    <span class="nav-label">&nbsp;RSS</span>
+                </a>
                 <a href="/resume.pdf" target="_blank" rel="noopener" aria-label="Resume">
                     <Icon name="lucide:file-text" size={20} />
                     <span class="nav-label">&nbsp;Resume</span>
@@ -104,7 +108,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
     header {
         max-width: var(--max-width);
         margin: 0 auto;
-        padding: 1.5rem 0;
+        padding: 1.25rem 0;
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
@@ -120,8 +124,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
     }
 
     .brand {
+        font-family: var(--font-heading, system-ui);
         font-weight: 600;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        letter-spacing: -0.01em;
         text-decoration: none;
         color: var(--color-text);
         display: flex;
@@ -140,7 +146,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
     }
 
     nav a {
-        font-size: 0.9rem;
+        font-family: var(--font-heading, system-ui);
+        font-weight: 500;
+        font-size: 0.95rem;
         color: var(--color-muted);
         text-decoration: none;
         transition: color 0.15s;
@@ -165,13 +173,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
     main {
         max-width: var(--max-width);
         margin: 0 auto;
-        padding: 3rem 0;
+        padding: 1.75rem 0;
     }
 
     footer {
         max-width: var(--max-width);
         margin: 0 auto;
-        padding: 2rem 0;
+        padding: 1.5rem 0;
         border-top: 1px solid var(--color-border);
         font-size: 0.85rem;
         color: var(--color-muted);
