@@ -35,6 +35,7 @@ function formatDate(date: Date) {
 <BaseLayout title="Blog">
     <h1>Blog</h1>
 
+    <br />
     {
         Object.entries(seriesMap).map(([series, { title, posts }]) => (
             <section class="series-section">
@@ -109,6 +110,7 @@ function formatDate(date: Date) {
     .post-list {
         list-style: none;
         padding: 0;
+        padding-left: 1.5rem;
         margin: 0;
     }
 
