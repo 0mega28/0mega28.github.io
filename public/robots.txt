@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://0mega28.github.io/sitemap-index.xml
