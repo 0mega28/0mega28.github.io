@@ -56,7 +56,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
     </head>
     <body>
         <header>
-            <a href="/" class="brand">0mega28</a>
+            <a href="/" class="brand">
+                <Icon name="lucide:home" size={20} />
+                <span class="brand-label">&nbsp;Home</span>
+            </a>
             <nav>
                 <a href="/blog">
                     <Icon name="lucide:book-open" size={20} />
@@ -123,6 +126,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
         font-size: 1.1rem;
         text-decoration: none;
         color: var(--color-text);
+        display: flex;
+        align-items: center;
+        transition: color 0.15s;
+    }
+
+    .brand:hover {
+        color: var(--color-accent);
     }
 
     nav {
