@@ -71,3 +71,42 @@ code {
     padding-left: calc(1.25rem - 3px);
 }
 
+/* Copy Code Button */
+.copy-code-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background-color 0.15s, color 0.15s;
+    user-select: none;
+}
+
+/* Show button on hover of the pre block */
+.astro-code:hover .copy-code-button,
+.copy-code-button:focus {
+    opacity: 0.9;
+}
+
+.copy-code-button:hover {
+    color: var(--color-accent);
+    background: var(--color-surface);
+    border-color: var(--color-accent);
+    opacity: 1 !important;
+}
+
+.copy-code-button.copied {
+    color: #10b981; /* Success green */
+    border-color: #10b981;
+    background: var(--color-surface);
+    opacity: 1 !important;
+}
+
+
