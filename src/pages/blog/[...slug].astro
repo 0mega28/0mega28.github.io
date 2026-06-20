@@ -21,10 +21,11 @@ const { Content, headings } = await render(post);
 function formatDate(date: Date) {
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
+const hasToc = headings.some(h => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="blog-post">
+<BaseLayout title={post.data.title} description={post.data.description} wide={hasToc}>
+  <div class={`post-layout ${hasToc ? '' : 'no-toc'}`}>
     <header class="post-header">
       <h1>{post.data.title}</h1>
       <div class="post-meta-container">
@@ -36,22 +37,40 @@ function formatDate(date: Date) {
       </div>
     </header>
     
-    <TableOfContents headings={headings} />
+    {hasToc && (
+      <aside class="post-sidebar">
+        <TableOfContents headings={headings} />
+      </aside>
+    )}
     
-    <div class="post-content">
+    <article class="post-content">
       <Content />
-    </div>
-  </article>
+    </article>
+  </div>
 </BaseLayout>
 
 <style>
-  .blog-post {
+  .post-layout {
+    display: grid;
+    grid-template-areas:
+      "header"
+      "toc"
+      "content";
+    grid-template-columns: 100%;
+    gap: 1.5rem;
+  }
+
+  .post-layout.no-toc {
+    grid-template-areas:
+      "header"
+      "content";
     max-width: var(--max-width);
     margin: 0 auto;
   }
 
   .post-header {
-    margin-bottom: 2rem;
+    grid-area: header;
+    margin-bottom: 1rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--color-border);
   }
@@ -70,7 +89,12 @@ function formatDate(date: Date) {
     color: var(--color-muted);
   }
 
+  .post-sidebar {
+    grid-area: toc;
+  }
+
   .post-content {
+    grid-area: content;
     line-height: 1.8;
   }
 
@@ -83,5 +107,21 @@ function formatDate(date: Date) {
   .post-content :global(h3) {
     margin-top: 2.5rem;
     margin-bottom: 1rem;
+  }
+
+  @media (min-width: 900px) {
+    .post-layout:not(.no-toc) {
+      grid-template-columns: 1fr 280px;
+      grid-template-areas:
+        "header header"
+        "content toc";
+      gap: 3.5rem;
+    }
+
+    .post-sidebar {
+      position: sticky;
+      top: 2rem;
+      height: fit-content;
+    }
   }
 </style>
