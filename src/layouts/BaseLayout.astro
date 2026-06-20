@@ -6,14 +6,12 @@ import { Icon } from "astro-icon/components";
 interface Props {
     title: string;
     description?: string;
-    wide?: boolean;
     ogType?: "website" | "article";
 }
 
 const {
     title,
     description = "Deep dives into Java internals, distributed systems, and systems programming.",
-    wide = false,
     ogType = "website",
 } = Astro.props;
 
@@ -93,7 +91,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
                 </a>
             </nav>
         </header>
-        <main class={wide ? "wide" : ""}>
+        <main>
             <slot />
         </main>
         <footer>
@@ -168,10 +166,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
         max-width: var(--max-width);
         margin: 0 auto;
         padding: 3rem 0;
-    }
-
-    main.wide {
-        max-width: 1000px;
     }
 
     footer {

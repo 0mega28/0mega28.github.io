@@ -15,7 +15,7 @@
     --color-bg: #fafaf8;
     --color-surface: #fff;
     --color-accent: #2563eb;
-    --max-width: 70ch;
+    --max-width: 1000px;
 }
 
 @media (prefers-color-scheme: dark) {
