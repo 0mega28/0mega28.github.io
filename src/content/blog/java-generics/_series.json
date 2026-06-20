@@ -1,4 +1,4 @@
 {
-  "title": "Java Generics Internals",
-  "description": "A deep dive into how Java generics work under the hood. This series covers type erasure, wildcards, bridge methods, and runtime workarounds."
+    "title": "Java Generics Internals",
+    "description": "A deep dive into how Java generics work under the hood. This series covers type erasure, wildcards, bridge methods, and runtime workarounds."
 }

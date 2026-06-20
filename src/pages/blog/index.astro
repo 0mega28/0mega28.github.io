@@ -1,72 +1,83 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getReadingTime } from '../../utils/readingTime';
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getReadingTime } from "../../utils/readingTime";
 
-const posts = await getCollection('blog', p =>
-    import.meta.env.DEV ? true : !p.data.draft
+const posts = await getCollection("blog", (p) => (import.meta.env.DEV ? true : !p.data.draft));
+
+const seriesList = await getCollection("series");
+const seriesMetadataMap = new Map(seriesList.map((s) => [s.id, s.data]));
+
+const seriesPosts = posts.filter((p) => p.data.series);
+const standalonePosts = posts.filter((p) => !p.data.series);
+
+const seriesMap = seriesPosts.reduce(
+    (acc, post) => {
+        const seriesId = post.data.series!;
+        const meta = seriesMetadataMap.get(seriesId);
+        const seriesTitle = meta ? meta.title : seriesId;
+        if (!acc[seriesId]) acc[seriesId] = { title: seriesTitle, posts: [] };
+        acc[seriesId].posts.push(post);
+        return acc;
+    },
+    {} as Record<string, { title: string; posts: typeof seriesPosts }>,
 );
 
-const seriesList = await getCollection('series');
-const seriesMetadataMap = new Map(seriesList.map(s => [s.id, s.data]));
-
-const seriesPosts = posts.filter(p => p.data.series);
-const standalonePosts = posts.filter(p => !p.data.series);
-
-const seriesMap = seriesPosts.reduce((acc, post) => {
-    const seriesId = post.data.series!;
-    const meta = seriesMetadataMap.get(seriesId);
-    const seriesTitle = meta ? meta.title : seriesId;
-    if (!acc[seriesId]) acc[seriesId] = { title: seriesTitle, posts: [] };
-    acc[seriesId].posts.push(post);
-    return acc;
-}, {} as Record<string, { title: string; posts: typeof seriesPosts }>);
-
-Object.values(seriesMap).forEach(s =>
-    s.posts.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+Object.values(seriesMap).forEach((s) =>
+    s.posts.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0)),
 );
 
 function formatDate(date: Date) {
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 ---
 
 <BaseLayout title="Blog">
     <h1>Blog</h1>
 
-    {Object.entries(seriesMap).map(([series, { title, posts }]) => (
-        <section class="series-section">
-            <h2 class="series-title">{title}</h2>
-            <ol class="post-list">
-                {posts.map(post => (
-                    <li class="post-item">
-                        <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                        <div class="post-meta-row">
-                            {post.data.draft && <span class="draft-badge">draft</span>}
-                            <span class="post-meta">{formatDate(post.data.publishDate)} · {getReadingTime(post.body || '')} min read</span>
-                        </div>
-                    </li>
-                ))}
-            </ol>
-        </section>
-    ))}
+    {
+        Object.entries(seriesMap).map(([series, { title, posts }]) => (
+            <section class="series-section">
+                <h2 class="series-title">{title}</h2>
+                <ol class="post-list">
+                    {posts.map((post) => (
+                        <li class="post-item">
+                            <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                            <div class="post-meta-row">
+                                {post.data.draft && <span class="draft-badge">draft</span>}
+                                <span class="post-meta">
+                                    {formatDate(post.data.publishDate)} ·{" "}
+                                    {getReadingTime(post.body || "")} min read
+                                </span>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+        ))
+    }
 
-    {standalonePosts.length > 0 && (
-        <section class="series-section">
-            <h2 class="series-title">Posts</h2>
-            <ol class="post-list">
-                {standalonePosts.map(post => (
-                    <li class="post-item">
-                        <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                        <div class="post-meta-row">
-                            {post.data.draft && <span class="draft-badge">draft</span>}
-                            <span class="post-meta">{formatDate(post.data.publishDate)} · {getReadingTime(post.body || '')} min read</span>
-                        </div>
-                    </li>
-                ))}
-            </ol>
-        </section>
-    )}
+    {
+        standalonePosts.length > 0 && (
+            <section class="series-section">
+                <h2 class="series-title">Posts</h2>
+                <ol class="post-list">
+                    {standalonePosts.map((post) => (
+                        <li class="post-item">
+                            <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                            <div class="post-meta-row">
+                                {post.data.draft && <span class="draft-badge">draft</span>}
+                                <span class="post-meta">
+                                    {formatDate(post.data.publishDate)} ·{" "}
+                                    {getReadingTime(post.body || "")} min read
+                                </span>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+        )
+    }
 </BaseLayout>
 
 <style>

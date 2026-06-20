@@ -1,219 +1,226 @@
 ---
-import { getCollection, render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getReadingTime } from '../../utils/readingTime';
-import TableOfContents from '../../components/TableOfContents.astro';
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getReadingTime } from "../../utils/readingTime";
+import TableOfContents from "../../components/TableOfContents.astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', p =>
-    import.meta.env.DEV ? true : !p.data.draft
-  );
+    const posts = await getCollection("blog", (p) => (import.meta.env.DEV ? true : !p.data.draft));
 
-  return posts.map(post => {
-    let prev = null;
-    let next = null;
+    return posts.map((post) => {
+        let prev = null;
+        let next = null;
 
-    if (post.data.series) {
-      const seriesPosts = posts
-        .filter(p => p.data.series === post.data.series)
-        .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+        if (post.data.series) {
+            const seriesPosts = posts
+                .filter((p) => p.data.series === post.data.series)
+                .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 
-      const index = seriesPosts.findIndex(p => p.id === post.id);
-      if (index > 0) {
-        prev = {
-          id: seriesPosts[index - 1].id,
-          title: seriesPosts[index - 1].data.title,
+            const index = seriesPosts.findIndex((p) => p.id === post.id);
+            if (index > 0) {
+                prev = {
+                    id: seriesPosts[index - 1].id,
+                    title: seriesPosts[index - 1].data.title,
+                };
+            }
+            if (index < seriesPosts.length - 1) {
+                next = {
+                    id: seriesPosts[index + 1].id,
+                    title: seriesPosts[index + 1].data.title,
+                };
+            }
+        }
+
+        return {
+            params: { slug: post.id },
+            props: { post, prev, next },
         };
-      }
-      if (index < seriesPosts.length - 1) {
-        next = {
-          id: seriesPosts[index + 1].id,
-          title: seriesPosts[index + 1].data.title,
-        };
-      }
-    }
-
-    return {
-      params: { slug: post.id },
-      props: { post, prev, next },
-    };
-  });
+    });
 }
 
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
-const hasToc = headings.some(h => h.depth === 2 || h.depth === 3);
+const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} wide={hasToc} ogType="article">
-  <div class={`post-layout ${hasToc ? '' : 'no-toc'}`}>
-    <header class="post-header">
-      <h1>{post.data.title}</h1>
-      <div class="post-meta-container">
-        <time datetime={post.data.publishDate.toISOString()} class="post-date">
-          {formatDate(post.data.publishDate)}
-        </time>
-        <span class="post-reading-time">· {getReadingTime(post.body || '')} min read</span>
-        {post.data.draft && <span class="draft-badge">draft</span>}
-      </div>
-    </header>
-    
-    {hasToc && (
-      <aside class="post-sidebar">
-        <TableOfContents headings={headings} />
-      </aside>
-    )}
-    
-    <article class="post-content">
-      <Content />
-      
-      {post.data.series && (prev || next) && (
-        <nav class="series-nav" aria-label="Series navigation">
-          {prev ? (
-            <a href={`/blog/${prev.id}`} class="series-nav-link prev">
-              <span class="series-nav-label">← Previous</span>
-              <span class="series-nav-title">{prev.title}</span>
-            </a>
-          ) : (
-            <div class="series-nav-spacer"></div>
-          )}
-          {next ? (
-            <a href={`/blog/${next.id}`} class="series-nav-link next">
-              <span class="series-nav-label">Next →</span>
-              <span class="series-nav-title">{next.title}</span>
-            </a>
-          ) : (
-            <div class="series-nav-spacer"></div>
-          )}
-        </nav>
-      )}
-    </article>
-  </div>
+<BaseLayout
+    title={post.data.title}
+    description={post.data.description}
+    wide={hasToc}
+    ogType="article"
+>
+    <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
+        <header class="post-header">
+            <h1>{post.data.title}</h1>
+            <div class="post-meta-container">
+                <time datetime={post.data.publishDate.toISOString()} class="post-date">
+                    {formatDate(post.data.publishDate)}
+                </time>
+                <span class="post-reading-time">· {getReadingTime(post.body || "")} min read</span>
+                {post.data.draft && <span class="draft-badge">draft</span>}
+            </div>
+        </header>
+
+        {
+            hasToc && (
+                <aside class="post-sidebar">
+                    <TableOfContents headings={headings} />
+                </aside>
+            )
+        }
+
+        <article class="post-content">
+            <Content />
+
+            {
+                post.data.series && (prev || next) && (
+                    <nav class="series-nav" aria-label="Series navigation">
+                        {prev ? (
+                            <a href={`/blog/${prev.id}`} class="series-nav-link prev">
+                                <span class="series-nav-label">← Previous</span>
+                                <span class="series-nav-title">{prev.title}</span>
+                            </a>
+                        ) : (
+                            <div class="series-nav-spacer" />
+                        )}
+                        {next ? (
+                            <a href={`/blog/${next.id}`} class="series-nav-link next">
+                                <span class="series-nav-label">Next →</span>
+                                <span class="series-nav-title">{next.title}</span>
+                            </a>
+                        ) : (
+                            <div class="series-nav-spacer" />
+                        )}
+                    </nav>
+                )
+            }
+        </article>
+    </div>
 </BaseLayout>
 
 <style>
-  .post-layout {
-    display: grid;
-    grid-template-areas:
-      "header"
-      "toc"
-      "content";
-    grid-template-columns: 100%;
-    gap: 1.5rem;
-  }
+    .post-layout {
+        display: grid;
+        grid-template-areas:
+            "header"
+            "toc"
+            "content";
+        grid-template-columns: 100%;
+        gap: 1.5rem;
+    }
 
-  .post-layout.no-toc {
-    grid-template-areas:
-      "header"
-      "content";
-    max-width: var(--max-width);
-    margin: 0 auto;
-  }
+    .post-layout.no-toc {
+        grid-template-areas:
+            "header"
+            "content";
+        max-width: var(--max-width);
+        margin: 0 auto;
+    }
 
-  .post-header {
-    grid-area: header;
-    margin-bottom: 1rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-  }
+    .post-header {
+        grid-area: header;
+        margin-bottom: 1rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
 
-  .post-header h1 {
-    font-size: 2.25rem;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-  }
+    .post-header h1 {
+        font-size: 2.25rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
 
-  .post-meta-container {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.9rem;
-    color: var(--color-muted);
-  }
-
-  .post-sidebar {
-    grid-area: toc;
-  }
-
-  .post-content {
-    grid-area: content;
-    line-height: 1.8;
-  }
-
-  /* Make sure spacing is nice inside markdown posts */
-  .post-content :global(p) {
-    margin-bottom: 1.5rem;
-  }
-
-  .post-content :global(h2),
-  .post-content :global(h3) {
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  /* Series Navigation styling */
-  .series-nav {
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .series-nav-link {
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    max-width: 48%;
-  }
-
-  .series-nav-link.next {
-    align-items: flex-end;
-    text-align: right;
-  }
-
-  .series-nav-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-muted);
-    font-family: var(--font-mono);
-    margin-bottom: 0.25rem;
-  }
-
-  .series-nav-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-accent);
-    line-height: 1.4;
-  }
-
-  .series-nav-link:hover .series-nav-title {
-    text-decoration: underline;
-  }
-
-  .series-nav-spacer {
-    flex: 1;
-  }
-
-  @media (min-width: 900px) {
-    .post-layout:not(.no-toc) {
-      grid-template-columns: 1fr 280px;
-      grid-template-areas:
-        "header header"
-        "content toc";
-      gap: 3.5rem;
+    .post-meta-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+        color: var(--color-muted);
     }
 
     .post-sidebar {
-      position: sticky;
-      top: 2rem;
-      height: fit-content;
+        grid-area: toc;
     }
-  }
+
+    .post-content {
+        grid-area: content;
+        line-height: 1.8;
+    }
+
+    /* Make sure spacing is nice inside markdown posts */
+    .post-content :global(p) {
+        margin-bottom: 1.5rem;
+    }
+
+    .post-content :global(h2),
+    .post-content :global(h3) {
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Series Navigation styling */
+    .series-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .series-nav-link {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        max-width: 48%;
+    }
+
+    .series-nav-link.next {
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .series-nav-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        margin-bottom: 0.25rem;
+    }
+
+    .series-nav-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--color-accent);
+        line-height: 1.4;
+    }
+
+    .series-nav-link:hover .series-nav-title {
+        text-decoration: underline;
+    }
+
+    .series-nav-spacer {
+        flex: 1;
+    }
+
+    @media (min-width: 900px) {
+        .post-layout:not(.no-toc) {
+            grid-template-columns: 1fr 280px;
+            grid-template-areas:
+                "header header"
+                "content toc";
+            gap: 3.5rem;
+        }
+
+        .post-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+    }
 </style>

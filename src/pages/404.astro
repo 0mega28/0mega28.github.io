@@ -1,62 +1,62 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Page Not Found">
-  <div class="error-container">
-    <h1 class="error-code">404</h1>
-    <p class="subheadline">This page could not be found.</p>
-    <p class="error-message">
-      You might have typed the URL incorrectly, or the page may have been moved.
-    </p>
-    <a href="/" class="home-link">Go back home</a>
-  </div>
+    <div class="error-container">
+        <h1 class="error-code">404</h1>
+        <p class="subheadline">This page could not be found.</p>
+        <p class="error-message">
+            You might have typed the URL incorrectly, or the page may have been moved.
+        </p>
+        <a href="/" class="home-link">Go back home</a>
+    </div>
 </BaseLayout>
 
 <style>
-  .error-container {
-    text-align: center;
-    padding: 4rem 1rem;
-    max-width: var(--max-width);
-    margin: 0 auto;
-  }
+    .error-container {
+        text-align: center;
+        padding: 4rem 1rem;
+        max-width: var(--max-width);
+        margin: 0 auto;
+    }
 
-  .error-code {
-    font-size: 6rem;
-    font-weight: 600;
-    line-height: 1;
-    margin: 0 0 1rem;
-    color: var(--color-accent);
-    font-family: var(--font-mono);
-  }
+    .error-code {
+        font-size: 6rem;
+        font-weight: 600;
+        line-height: 1;
+        margin: 0 0 1rem;
+        color: var(--color-accent);
+        font-family: var(--font-mono);
+    }
 
-  .error-message {
-    margin-bottom: 2.5rem;
-    color: var(--color-muted);
-  }
+    .error-message {
+        margin-bottom: 2.5rem;
+        color: var(--color-muted);
+    }
 
-  .home-link {
-    display: inline-block;
-    padding: 0.5rem 1.25rem;
-    color: var(--color-surface);
-    background: var(--color-accent);
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: background-color 0.15s;
-  }
-
-  .home-link:hover {
-    background: #1d4ed8;
-  }
-
-  @media (prefers-color-scheme: dark) {
     .home-link {
-      color: #141413; /* Use background color for contrast on dark theme */
+        display: inline-block;
+        padding: 0.5rem 1.25rem;
+        color: var(--color-surface);
+        background: var(--color-accent);
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: background-color 0.15s;
     }
+
     .home-link:hover {
-      background: #93c5fd;
+        background: #1d4ed8;
     }
-  }
+
+    @media (prefers-color-scheme: dark) {
+        .home-link {
+            color: #141413; /* Use background color for contrast on dark theme */
+        }
+        .home-link:hover {
+            background: #93c5fd;
+        }
+    }
 </style>

@@ -1,156 +1,174 @@
 ---
-import '../styles/global.css';
-import '../styles/code.css';
-import { Icon } from 'astro-icon/components';
+import "../styles/global.css";
+import "../styles/code.css";
+import { Icon } from "astro-icon/components";
 
 interface Props {
-  title: string;
-  description?: string;
-  wide?: boolean;
-  ogType?: 'website' | 'article';
+    title: string;
+    description?: string;
+    wide?: boolean;
+    ogType?: "website" | "article";
 }
 
 const {
-  title,
-  description = "Deep dives into Java internals, distributed systems, and systems programming.",
-  wide = false,
-  ogType = 'website'
+    title,
+    description = "Deep dives into Java internals, distributed systems, and systems programming.",
+    wide = false,
+    ogType = "website",
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://0mega28.github.io').href;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.github.io").href;
 ---
 
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href={canonicalURL} />
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content={description} />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content={ogType} />
-    <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={`${title} · 0mega28`} />
-    <meta property="og:description" content={description} />
+        <!-- Canonical URL -->
+        <link rel="canonical" href={canonicalURL} />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={`${title} · 0mega28`} />
-    <meta property="twitter:description" content={description} />
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content={ogType} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={`${title} · 0mega28`} />
+        <meta property="og:description" content={description} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <title>{title} · 0mega28</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="alternate" type="application/rss+xml" title="0mega28's Blog" href="/rss.xml" />
-    <script src="../scripts/copy-code.ts"></script>
-  </head>
-  <body>
-    <header>
-      <a href="/" class="brand">0mega28</a>
-      <nav>
-        <a href="/blog" >
-            <Icon name="lucide:book-open" size={20} />
-            <span class="nav-label">&nbsp;Blog</span>
-        </a>
-        <a href="https://github.com/0mega28" target="_blank" rel="noopener" aria-label="GitHub" >
-            <Icon name="simple-icons:github" size={20} />
-            <span class="nav-label">&nbsp;GitHub</span>
-        </a>
-        <a href="https://linkedin.com/in/sakshamgupta28" target="_blank" rel="noopener" aria-label="LinkedIn">
-          <Icon name="simple-icons:linkedin" size={20} />
-          <span class="nav-label">&nbsp;LinkedIn</span>
-        </a>
-        <a href="/resume.pdf" target="_blank" rel="noopener" aria-label="Resume">
-          <Icon name="lucide:file-text" size={20} />
-          <span class="nav-label">&nbsp;Resume</span>
-        </a>
-        <a href="mailto:sakshamdam54321@gmail.com" aria-label="Email">
-          <Icon name="lucide:mail" size={20} />
-          <span class="nav-label">&nbsp;Mail</span>
-        </a>
-      </nav>
-    </header>
-    <main class={wide ? 'wide' : ''}>
-      <slot />
-    </main>
-    <footer>
-      <p>© {new Date().getFullYear()} 0mega28</p>
-    </footer>
-  </body>
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={canonicalURL} />
+        <meta property="twitter:title" content={`${title} · 0mega28`} />
+        <meta property="twitter:description" content={description} />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <title>{title} · 0mega28</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="alternate" type="application/rss+xml" title="0mega28's Blog" href="/rss.xml" />
+        <script src="../scripts/copy-code.ts"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/" class="brand">0mega28</a>
+            <nav>
+                <a href="/blog">
+                    <Icon name="lucide:book-open" size={20} />
+                    <span class="nav-label">&nbsp;Blog</span>
+                </a>
+                <a
+                    href="https://github.com/0mega28"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="GitHub"
+                >
+                    <Icon name="simple-icons:github" size={20} />
+                    <span class="nav-label">&nbsp;GitHub</span>
+                </a>
+                <a
+                    href="https://linkedin.com/in/sakshamgupta28"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="LinkedIn"
+                >
+                    <Icon name="simple-icons:linkedin" size={20} />
+                    <span class="nav-label">&nbsp;LinkedIn</span>
+                </a>
+                <a href="/resume.pdf" target="_blank" rel="noopener" aria-label="Resume">
+                    <Icon name="lucide:file-text" size={20} />
+                    <span class="nav-label">&nbsp;Resume</span>
+                </a>
+                <a href="mailto:sakshamdam54321@gmail.com" aria-label="Email">
+                    <Icon name="lucide:mail" size={20} />
+                    <span class="nav-label">&nbsp;Mail</span>
+                </a>
+            </nav>
+        </header>
+        <main class={wide ? "wide" : ""}>
+            <slot />
+        </main>
+        <footer>
+            <p>© {new Date().getFullYear()} 0mega28</p>
+        </footer>
+    </body>
 </html>
 
-
 <style>
-header {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 1.5rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  border-bottom: 1px solid var(--color-border);
-}
+    header {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        border-bottom: 1px solid var(--color-border);
+    }
 
-@media (min-width: 600px) {
-  header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
+    @media (min-width: 600px) {
+        header {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
 
-.brand {
-  font-weight: 600;
-  font-size: 1.1rem;
-  text-decoration: none;
-  color: var(--color-text);
-}
+    .brand {
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        color: var(--color-text);
+    }
 
-nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    nav {
+        display: flex;
+        gap: 1.25rem;
+        flex-wrap: wrap;
+    }
 
-nav a {
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  text-decoration: none;
-  transition: color 0.15s;
-  display: flex;
-  align-items: center;
-}
+    nav a {
+        font-size: 0.9rem;
+        color: var(--color-muted);
+        text-decoration: none;
+        transition: color 0.15s;
+        display: flex;
+        align-items: center;
+    }
 
-nav a:hover { color: var(--color-accent); }
+    nav a:hover {
+        color: var(--color-accent);
+    }
 
-.nav-label {
-  display: none;
-}
+    .nav-label {
+        display: none;
+    }
 
-@media (min-width: 600px) {
-  .nav-label {
-    display: inline;
-  }
-}
+    @media (min-width: 600px) {
+        .nav-label {
+            display: inline;
+        }
+    }
 
-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 3rem 0;
-}
+    main {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 3rem 0;
+    }
 
-main.wide {
-  max-width: 1000px;
-}
+    main.wide {
+        max-width: 1000px;
+    }
 
-footer {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 2rem 0;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.85rem;
-  color: var(--color-muted);
-}
+    footer {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 2rem 0;
+        border-top: 1px solid var(--color-border);
+        font-size: 0.85rem;
+        color: var(--color-muted);
+    }
 </style>
