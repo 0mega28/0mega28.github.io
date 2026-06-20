@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getReadingTime } from '../../utils/readingTime';
 
 const posts = await getCollection('blog', p =>
     import.meta.env.DEV ? true : !p.data.draft
@@ -42,7 +43,7 @@ function formatDate(date: Date) {
                         <a href={`/blog/${post.id}`}>{post.data.title}</a>
                         <div class="post-meta-row">
                             {post.data.draft && <span class="draft-badge">draft</span>}
-                            <span class="post-meta">{formatDate(post.data.publishDate)}</span>
+                            <span class="post-meta">{formatDate(post.data.publishDate)} · {getReadingTime(post.body || '')} min read</span>
                         </div>
                     </li>
                 ))}
@@ -59,7 +60,7 @@ function formatDate(date: Date) {
                         <a href={`/blog/${post.id}`}>{post.data.title}</a>
                         <div class="post-meta-row">
                             {post.data.draft && <span class="draft-badge">draft</span>}
-                            <span class="post-meta">{formatDate(post.data.publishDate)}</span>
+                            <span class="post-meta">{formatDate(post.data.publishDate)} · {getReadingTime(post.body || '')} min read</span>
                         </div>
                     </li>
                 ))}

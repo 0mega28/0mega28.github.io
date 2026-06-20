@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getReadingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', p =>
@@ -29,6 +30,7 @@ function formatDate(date: Date) {
         <time datetime={post.data.publishDate.toISOString()} class="post-date">
           {formatDate(post.data.publishDate)}
         </time>
+        <span class="post-reading-time">· {getReadingTime(post.body || '')} min read</span>
         {post.data.draft && <span class="draft-badge">draft</span>}
       </div>
     </header>
