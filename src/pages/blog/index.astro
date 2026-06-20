@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('blog', p =>
+    import.meta.env.DEV ? true : !p.data.draft
+);
+
+const seriesList = await getCollection('series');
+const seriesMetadataMap = new Map(seriesList.map(s => [s.id, s.data]));
+
+const seriesPosts = posts.filter(p => p.data.series);
+const standalonePosts = posts.filter(p => !p.data.series);
+
+const seriesMap = seriesPosts.reduce((acc, post) => {
+    const seriesId = post.data.series!;
+    const meta = seriesMetadataMap.get(seriesId);
+    const seriesTitle = meta ? meta.title : seriesId;
+    if (!acc[seriesId]) acc[seriesId] = { title: seriesTitle, posts: [] };
+    acc[seriesId].posts.push(post);
+    return acc;
+}, {} as Record<string, { title: string; posts: typeof seriesPosts }>);
+
+Object.values(seriesMap).forEach(s =>
+    s.posts.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+);
+
+function formatDate(date: Date) {
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+---
+
+<BaseLayout title="Blog">
+    <h1>Blog</h1>
+
+    {Object.entries(seriesMap).map(([series, { title, posts }]) => (
+        <section class="series-section">
+            <h2 class="series-title">{title}</h2>
+            <ol class="post-list">
+                {posts.map(post => (
+                    <li class="post-item">
+                        <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                        <div class="post-meta-row">
+                            {post.data.draft && <span class="draft-badge">draft</span>}
+                            <span class="post-meta">{formatDate(post.data.publishDate)}</span>
+                        </div>
+                    </li>
+                ))}
+            </ol>
+        </section>
+    ))}
+
+    {standalonePosts.length > 0 && (
+        <section class="series-section">
+            <h2 class="series-title">Posts</h2>
+            <ol class="post-list">
+                {standalonePosts.map(post => (
+                    <li class="post-item">
+                        <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                        <div class="post-meta-row">
+                            {post.data.draft && <span class="draft-badge">draft</span>}
+                            <span class="post-meta">{formatDate(post.data.publishDate)}</span>
+                        </div>
+                    </li>
+                ))}
+            </ol>
+        </section>
+    )}
+</BaseLayout>
+
+<style>
+    .series-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .series-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+        margin-top: 0;
+    }
+
+    .post-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .post-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .post-item a {
+        text-decoration: none;
+        color: var(--color-text);
+        font-size: 1rem;
+    }
+
+    .post-item a:hover {
+        color: var(--color-accent);
+    }
+
+    .post-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+        margin-left: 1rem;
+    }
+</style>
