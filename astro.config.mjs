@@ -1,12 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import icon from 'astro-icon';
+import sitemap from '@astrojs/sitemap';
 import { transformerMetaHighlight } from '@shikijs/transformers';
 
 // https://astro.build/config
 export default defineConfig({
     site: 'https://0mega28.github.io',
-    integrations: [icon()],
+    integrations: [icon(), sitemap()],
     markdown: {
         shikiConfig: {
             themes: {
