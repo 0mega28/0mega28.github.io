@@ -7,14 +7,17 @@ interface Props {
   title: string;
   description?: string;
   wide?: boolean;
+  ogType?: 'website' | 'article';
 }
 
 const {
   title,
   description = "Deep dives into Java internals, distributed systems, and systems programming.",
-  wide = false
+  wide = false,
+  ogType = 'website'
 } = Astro.props;
 
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://0mega28.github.io').href;
 ---
 
 <html lang="en">
@@ -22,6 +25,22 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={`${title} · 0mega28`} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={`${title} · 0mega28`} />
+    <meta property="twitter:description" content={description} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
