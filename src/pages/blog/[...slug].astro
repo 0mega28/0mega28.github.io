@@ -6,8 +6,9 @@ import TableOfContents from "../../components/TableOfContents.astro";
 
 export async function getStaticPaths() {
     const posts = await getCollection("blog", (p) => (import.meta.env.DEV ? true : !p.data.draft));
+    const seriesList = await getCollection("series");
 
-    return posts.map((post) => {
+    const postPaths = posts.map((post) => {
         let prev = null;
         let next = null;
 
@@ -33,76 +34,195 @@ export async function getStaticPaths() {
 
         return {
             params: { slug: post.id },
-            props: { post, prev, next },
+            props: { type: "post" as const, post, prev, next },
         };
     });
+
+    const seriesPaths = seriesList.map((series) => {
+        const seriesPosts = posts
+            .filter((p) => p.data.series === series.id)
+            .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+
+        return {
+            params: { slug: series.id },
+            props: { type: "series" as const, series, posts: seriesPosts },
+        };
+    });
+
+    return [...postPaths, ...seriesPaths];
 }
 
-const { post, prev, next } = Astro.props;
-const { Content, headings } = await render(post);
+const props = Astro.props;
 
 function formatDate(date: Date) {
     return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
-const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout
-    title={post.data.title}
-    description={post.data.description}
-    wide={hasToc}
-    ogType="article"
->
-    <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
-        <header class="post-header">
-            <h1>{post.data.title}</h1>
-            <div class="post-meta-container">
-                <time datetime={post.data.publishDate.toISOString()} class="post-date">
-                    {formatDate(post.data.publishDate)}
-                </time>
-                <span class="post-reading-time">· {getReadingTime(post.body || "")} min read</span>
-                {post.data.draft && <span class="draft-badge">draft</span>}
-            </div>
-        </header>
+{
+    props.type === "post"
+        ? (() => {
+              const { post, prev, next } = props;
+              // We render render(post) dynamically. Since top-level await is allowed:
+              // Let's resolve the rendering of the post.
+              return render(post).then(({ Content, headings }) => {
+                  const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
+                  return (
+                      <BaseLayout
+                          title={post.data.title}
+                          description={post.data.description}
+                          wide={hasToc}
+                          ogType="article"
+                      >
+                          <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
+                              <header class="post-header">
+                                  <a href="/blog" class="back-link">
+                                      ← All Posts
+                                  </a>
+                                  {post.data.series && (
+                                      <div class="post-series-meta">
+                                          Part of the{" "}
+                                          <a href={`/blog/${post.data.series}`}>
+                                              {post.data.series.replace("-", " ")}
+                                          </a>{" "}
+                                          series
+                                      </div>
+                                  )}
+                                  <h1>{post.data.title}</h1>
+                                  <div class="post-meta-container">
+                                      <time
+                                          datetime={post.data.publishDate.toISOString()}
+                                          class="post-date"
+                                      >
+                                          {formatDate(post.data.publishDate)}
+                                      </time>
+                                      <span class="post-reading-time">
+                                          · {getReadingTime(post.body || "")} min read
+                                      </span>
+                                      {post.data.draft && <span class="draft-badge">draft</span>}
+                                  </div>
+                              </header>
 
-        {
-            hasToc && (
-                <aside class="post-sidebar">
-                    <TableOfContents headings={headings} />
-                </aside>
-            )
-        }
+                              {hasToc && (
+                                  <aside class="post-sidebar">
+                                      <TableOfContents headings={headings} />
+                                  </aside>
+                              )}
 
-        <article class="post-content">
-            <Content />
+                              <article class="post-content">
+                                  <Content />
 
-            {
-                post.data.series && (prev || next) && (
-                    <nav class="series-nav" aria-label="Series navigation">
-                        {prev ? (
-                            <a href={`/blog/${prev.id}`} class="series-nav-link prev">
-                                <span class="series-nav-label">← Previous</span>
-                                <span class="series-nav-title">{prev.title}</span>
-                            </a>
-                        ) : (
-                            <div class="series-nav-spacer" />
-                        )}
-                        {next ? (
-                            <a href={`/blog/${next.id}`} class="series-nav-link next">
-                                <span class="series-nav-label">Next →</span>
-                                <span class="series-nav-title">{next.title}</span>
-                            </a>
-                        ) : (
-                            <div class="series-nav-spacer" />
-                        )}
-                    </nav>
-                )
-            }
-        </article>
-    </div>
-</BaseLayout>
+                                  {post.data.series && (prev || next) && (
+                                      <nav class="series-nav" aria-label="Series navigation">
+                                          {prev ? (
+                                              <a
+                                                  href={`/blog/${prev.id}`}
+                                                  class="series-nav-link prev"
+                                              >
+                                                  <span class="series-nav-label">← Previous</span>
+                                                  <span class="series-nav-title">{prev.title}</span>
+                                              </a>
+                                          ) : (
+                                              <div class="series-nav-spacer" />
+                                          )}
+                                          {next ? (
+                                              <a
+                                                  href={`/blog/${next.id}`}
+                                                  class="series-nav-link next"
+                                              >
+                                                  <span class="series-nav-label">Next →</span>
+                                                  <span class="series-nav-title">{next.title}</span>
+                                              </a>
+                                          ) : (
+                                              <div class="series-nav-spacer" />
+                                          )}
+                                      </nav>
+                                  )}
+                              </article>
+                          </div>
+                      </BaseLayout>
+                  );
+              });
+          })()
+        : (() => {
+              const { series, posts } = props;
+              return (
+                  <BaseLayout title={series.data.title} description={series.data.description}>
+                      <div class="series-layout">
+                          <header class="series-header">
+                              <a href="/blog" class="back-link">
+                                  ← All Posts
+                              </a>
+                              <span class="series-badge">Series</span>
+                              <h1>{series.data.title}</h1>
+                              <p class="series-description">{series.data.description}</p>
+                          </header>
+
+                          <section class="series-posts-section">
+                              <h2 class="section-title">Posts in this series</h2>
+                              <ol class="series-post-list">
+                                  {posts.map((post, idx) => (
+                                      <li class="series-post-item">
+                                          <span class="post-number">
+                                              {String(idx + 1).padStart(2, "0")}.
+                                          </span>
+                                          <div class="post-info">
+                                              <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                                              <p class="post-desc">{post.data.description}</p>
+                                              <div class="post-meta-row">
+                                                  <span class="post-meta">
+                                                      {formatDate(post.data.publishDate)} ·{" "}
+                                                      {getReadingTime(post.body || "")} min read
+                                                  </span>
+                                                  {post.data.draft && (
+                                                      <span class="draft-badge">draft</span>
+                                                  )}
+                                              </div>
+                                          </div>
+                                      </li>
+                                  ))}
+                              </ol>
+                          </section>
+                      </div>
+                  </BaseLayout>
+              );
+          })()
+}
 
 <style>
+    .back-link {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-family: var(--font-mono);
+        text-decoration: none;
+        color: var(--color-muted);
+        margin-bottom: 1.5rem;
+        transition: color 0.15s;
+    }
+
+    .back-link:hover {
+        color: var(--color-accent);
+    }
+
+    .post-series-meta {
+        font-size: 0.85rem;
+        font-family: var(--font-mono);
+        color: var(--color-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .post-series-meta a {
+        color: var(--color-accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .post-series-meta a:hover {
+        text-decoration: underline;
+    }
+
     .post-layout {
         display: grid;
         grid-template-areas:
@@ -206,6 +326,105 @@ const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 
     .series-nav-spacer {
         flex: 1;
+    }
+
+    /* Series Layout styling */
+    .series-layout {
+        max-width: var(--max-width);
+        margin: 0 auto;
+    }
+
+    .series-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        color: var(--color-accent);
+        border: 1px solid var(--color-accent);
+        padding: 0.1em 0.5em;
+        border-radius: 3px;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .series-header h1 {
+        font-size: 2.25rem;
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+    }
+
+    .series-description {
+        font-size: 1.15rem;
+        color: var(--color-muted);
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .series-posts-section {
+        margin-top: 3.5rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .series-post-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .series-post-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .series-post-item:last-child {
+        border-bottom: none;
+    }
+
+    .post-number {
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
+        color: var(--color-muted);
+        font-weight: 500;
+        margin-top: 0.1rem;
+    }
+
+    .post-info {
+        flex: 1;
+    }
+
+    .post-info a {
+        font-size: 1.15rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--color-text);
+        transition: color 0.15s;
+    }
+
+    .post-info a:hover {
+        color: var(--color-accent);
+    }
+
+    .post-desc {
+        font-size: 0.95rem;
+        color: var(--color-muted);
+        margin-top: 0.4rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    .post-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     @media (min-width: 900px) {
