@@ -3,184 +3,95 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Home">
-    <section class="intro">
+    <article class="home-intro">
         <h1>Hi, I'm Saksham</h1>
         <p class="subheadline">Software Engineer · IIT Roorkee CS Grad</p>
-        <p class="lead">
-            I like understanding how software systems work underneath. My interests lie in JVM
-            internals, compilers, language runtimes, operating systems, and distributed systems.
-        </p>
-    </section>
 
-    <section class="section">
-        <h2>Skills & Focus</h2>
-        <div class="skills-grid">
-            <div>
-                <h3>Languages</h3>
-                <p>Java, JavaScript, C++, Bash (Familiar with Python, Rust, Haskell)</p>
-            </div>
-            <div>
-                <h3>Core Interests</h3>
-                <p>
-                    REST API design, DSL design, workflow orchestration, observability, and
-                    performance profiling
-                </p>
-            </div>
+        <div class="intro-body">
+            <p>
+                I am a software engineer interested in the systems underneath our applications. My
+                curiosity usually drives me toward JVM internals, compilers, language runtimes,
+                operating systems, and distributed systems. I like exploring how they are built,
+                where they break, and how they can be optimized.
+            </p>
+
+            <p>
+                Over the past few years, my exploration has led me to build a few experimental
+                systems from scratch to understand them better:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>An Operating System from Scratch:</strong> A 32-bit UNIX clone kernel written
+                    in C and x86 Assembly. It has its own bootloader, handles interrupts, keyboard input,
+                    virtual memory, features a basic memory manager, and renders to a VGA display.
+                </li>
+                <li>
+                    <strong>Parsers & Interpreters:</strong> A lightweight, recursive-descent JSON parser
+                    in Java, alongside a self-contained math expression evaluator built using functional
+                    parser-combinator techniques.
+                </li>
+                <li>
+                    <strong>Network & Caching Utilities:</strong> A minimal HTTP proxy server in C++ using
+                    RAII for socket safety, and an implementation playground comparing different caching
+                    strategies and design patterns.
+                </li>
+            </ul>
+
+            <p>
+                This blog is where I publish deep dives into topics I have gone deep on. Starting
+                with a series on Java generics internals.
+            </p>
+
+            <p class="blog-cta">
+                <a href="/blog">Read the blog →</a>
+            </p>
         </div>
-    </section>
-
-    <section class="section">
-        <h2>Projects & Exploration</h2>
-        <ul class="projects-list">
-            <li>
-                <div class="project-header">
-                    <h3>OS From Scratch</h3>
-                    <span class="project-lang">C / Assembly</span>
-                </div>
-                <p>
-                    A 32-bit UNIX clone kernel written from scratch with a custom bootloader. It
-                    handles interrupts, keyboard input, virtual memory, and features a basic memory
-                    manager and VGA display driver.
-                </p>
-            </li>
-            <li>
-                <div class="project-header">
-                    <h3>Math Expression Evaluator</h3>
-                    <span class="project-lang">Java</span>
-                </div>
-                <p>
-                    A lightweight, self-contained expression parser and evaluator implemented in
-                    pure Java using functional parser-combinator techniques.
-                </p>
-            </li>
-            <li>
-                <div class="project-header">
-                    <h3>JsonParser</h3>
-                    <span class="project-lang">Java</span>
-                </div>
-                <p>
-                    A lightweight parser designed to parse JSON strings into Java objects using
-                    recursive descent parsing.
-                </p>
-            </li>
-            <li>
-                <div class="project-header">
-                    <h3>HttpProxy</h3>
-                    <span class="project-lang">C++</span>
-                </div>
-                <p>
-                    A minimal HTTP proxy server using RAII for socket safety and custom URL parsing.
-                    It parses incoming HTTP requests and forwards them to remote hosts.
-                </p>
-            </li>
-            <li>
-                <div class="project-header">
-                    <h3>CacheCraft</h3>
-                    <span class="project-lang">Java</span>
-                </div>
-                <p>
-                    A comprehensive repository dedicated to the implementation and study of various
-                    caching mechanisms and design patterns.
-                </p>
-            </li>
-        </ul>
-    </section>
-
-    <section class="section">
-        <p><a href="/blog" class="blog-link">Read my blog posts →</a></p>
-    </section>
+    </article>
 </BaseLayout>
 
 <style>
-    .intro {
-        margin-bottom: 3rem;
+    .home-intro {
+        max-width: var(--max-width);
+        margin: 0 auto;
     }
 
-    .intro h1 {
+    .home-intro h1 {
         font-size: 2.5rem;
         margin-top: 0;
         margin-bottom: 0.5rem;
     }
 
-    .lead {
-        font-size: 1.2rem;
-        line-height: 1.6;
-        color: var(--color-text);
-        margin-top: 1.5rem;
-    }
-
-    .section {
-        margin-bottom: 3.5rem;
-    }
-
-    .section h2 {
-        font-size: 1.5rem;
-        border-bottom: 1px solid var(--color-border);
-        padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
-        color: var(--color-muted);
-        font-family: var(--font-mono);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .skills-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    @media (min-width: 600px) {
-        .skills-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    .skills-grid h3 {
-        font-size: 1.1rem;
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-    }
-
-    .projects-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .projects-list li {
-        margin-bottom: 2rem;
-    }
-
-    .projects-list li:last-child {
-        margin-bottom: 0;
-    }
-
-    .project-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 0.5rem;
-    }
-
-    .project-header h3 {
+    .intro-body {
+        margin-top: 2rem;
         font-size: 1.15rem;
-        margin: 0;
+        line-height: 1.8;
     }
 
-    .project-lang {
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        color: var(--color-muted);
+    .intro-body p {
+        margin-bottom: 1.5rem;
     }
 
-    .blog-link {
-        font-size: 1.1rem;
+    .intro-body ul {
+        margin-bottom: 1.8rem;
+        padding-left: 1.5rem;
+    }
+
+    .intro-body li {
+        margin-bottom: 1rem;
+        line-height: 1.7;
+    }
+
+    .blog-cta {
+        margin-top: 2.5rem;
+    }
+
+    .blog-cta a {
         font-weight: 600;
         text-decoration: none;
     }
 
-    .blog-link:hover {
+    .blog-cta a:hover {
         text-decoration: underline;
     }
 </style>
