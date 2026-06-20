@@ -38,7 +38,9 @@ function formatDate(date: Date) {
     {
         Object.entries(seriesMap).map(([series, { title, posts }]) => (
             <section class="series-section">
-                <h2 class="series-title">{title}</h2>
+                <h2 class="series-title">
+                    <a href={`/blog/${series}`}>{title}</a>
+                </h2>
                 <ol class="post-list">
                     {posts.map((post) => (
                         <li class="post-item">
@@ -93,6 +95,15 @@ function formatDate(date: Date) {
         letter-spacing: 0.05em;
         margin-bottom: 0.75rem;
         margin-top: 0;
+    }
+
+    .series-title a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .series-title a:hover {
+        color: var(--color-accent);
     }
 
     .post-list {
