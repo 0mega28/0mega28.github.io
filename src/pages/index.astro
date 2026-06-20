@@ -7,9 +7,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <h1>Saksham Gupta</h1>
 
         <div class="bio-content">
-            <p>
-                I build systems, abstractions, and platforms that make other engineers more
-                productive.
+            <p class="punchline">
+                A systems engineer turning complex distributed chaos and low-level code into
+                elegant, predictable reality.
             </p>
 
             <p>
@@ -53,6 +53,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         margin-top: 2.5rem;
         font-size: 1.15rem;
         line-height: 1.8;
+    }
+
+    .punchline {
+        font-size: 1.35rem;
+        line-height: 1.5;
+        font-weight: 500;
+        color: var(--color-text);
+        margin-bottom: 2rem;
+        border-left: 3px solid var(--color-accent);
+        padding-left: 1.25rem;
     }
 
     .bio-content p {
