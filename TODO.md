@@ -9,26 +9,26 @@
 ## Features
 
 - [x] Add Icon for linkedin/github/resume/email
-- [ ] Content collections setup (schema, series support)
-- [ ] Blog index page (/blog)
-- [ ] Series index page (/blog/[series])
-- [ ] Blog post page (/blog/[series]/[post])
-- [ ] RSS feed
-- [ ] Syntax highlighting via Shiki (with line highlight support for javap output)
-- [ ] Table of contents on blog posts (auto-generated from headings)
-- [ ] Asymmetric sidebar layout for blog posts (ToC on the side on wide screens, inline on mobile)
-- [ ] Reading time estimate on posts
-- [ ] Previous / next post navigation within a series
-- [ ] Copy button on code blocks
-- [ ] 404 page
-- [ ] robots.txt
+- [x] Content collections setup (schema, series support)
+- [x] Blog index page (/blog)
+- [x] Series index page (/blog/[series])
+- [x] Blog post page (/blog/[series]/[post])
+- [x] RSS feed
+- [x] Syntax highlighting via Shiki (with line highlight support for javap output)
+- [x] Table of contents on blog posts (auto-generated from headings)
+- [x] Asymmetric sidebar layout for blog posts (ToC on the side on wide screens, inline on mobile)
+- [x] Reading time estimate on posts
+- [x] Previous / next post navigation within a series
+- [x] Copy button on code blocks
+- [x] 404 page
+- [x] robots.txt
 - [ ] Manual dark/light mode toggle (respects OS preference, persists via localStorage)
-- [ ] Setup Prettier with astro plugin for consistent formatting
+- [x] Setup Prettier with astro plugin for consistent formatting
 - [ ] Fix Icon Inconsistensy
 
 ## Performance
 
-- [ ] Verify fonts load with font-display: swap (no layout shift)
+- [x] Verify fonts load with font-display: swap (no layout shift)
 - [ ] Audit Lighthouse score before launch
 
 ## Content
@@ -40,12 +40,12 @@
 
 ## Before Launch
 
-- [ ] Favicon (replace default Astro one)
-- [ ] SEO meta tags (og:title, og:description, og:image)
-- [ ] Canonical URL meta tag on every page
-- [ ] sitemap (@astrojs/sitemap)
+- [x] Favicon (replace default Astro one)
+- [x] SEO meta tags (og:title, og:description, og:image)
+- [x] Canonical URL meta tag on every page
+- [x] sitemap (@astrojs/sitemap)
 - [ ] Google Search Console setup (submit sitemap)
 - [ ] Test on mobile (iOS + Android)
 - [ ] Test dark mode on both OS settings
 - [ ] Validate RSS feed output
-- [ ] Check all external links open in new tab with noopener
+- [x] Check all external links open in new tab with noopener
