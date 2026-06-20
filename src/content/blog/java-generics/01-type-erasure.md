@@ -8,7 +8,7 @@ tags: ["java", "generics", "jvm"]
 draft: true
 ---
 
-Java generics were introduced in JDK 5 to provide compile-time type safety. However, to maintain backward compatibility with older JVM versions, the compiler implements generics using a process called type erasure. 
+Java generics were introduced in JDK 5 to provide compile-time type safety. However, to maintain backward compatibility with older JVM versions, the compiler implements generics using a process called type erasure.
 
 This post looks at how type erasure works under the hood and what the compiler does to your code during compilation.
 

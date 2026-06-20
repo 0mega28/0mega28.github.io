@@ -3,15 +3,184 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Home">
-    <h1>Hi, I'm Saksham</h1>
-    <p class="subheadline">Software Engineer. IIT Roorkee CS grad.</p>
-    <p>
-        I like understanding how things work underneath. The JVM, language runtimes, operating
-        systems, distributed systems.
-    </p>
-    <p>
-        This blog is where I write about things I have gone deep on. Starting with Java generics
-        internals.
-    </p>
-    <p><a href="/blog">Blog →</a></p>
+    <section class="intro">
+        <h1>Hi, I'm Saksham</h1>
+        <p class="subheadline">Software Engineer · IIT Roorkee CS Grad</p>
+        <p class="lead">
+            I like understanding how software systems work underneath. My interests lie in JVM
+            internals, compilers, language runtimes, operating systems, and distributed systems.
+        </p>
+    </section>
+
+    <section class="section">
+        <h2>Skills & Focus</h2>
+        <div class="skills-grid">
+            <div>
+                <h3>Languages</h3>
+                <p>Java, JavaScript, C++, Bash (Familiar with Python, Rust, Haskell)</p>
+            </div>
+            <div>
+                <h3>Core Interests</h3>
+                <p>
+                    REST API design, DSL design, workflow orchestration, observability, and
+                    performance profiling
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Projects & Exploration</h2>
+        <ul class="projects-list">
+            <li>
+                <div class="project-header">
+                    <h3>OS From Scratch</h3>
+                    <span class="project-lang">C / Assembly</span>
+                </div>
+                <p>
+                    A 32-bit UNIX clone kernel written from scratch with a custom bootloader. It
+                    handles interrupts, keyboard input, virtual memory, and features a basic memory
+                    manager and VGA display driver.
+                </p>
+            </li>
+            <li>
+                <div class="project-header">
+                    <h3>Math Expression Evaluator</h3>
+                    <span class="project-lang">Java</span>
+                </div>
+                <p>
+                    A lightweight, self-contained expression parser and evaluator implemented in
+                    pure Java using functional parser-combinator techniques.
+                </p>
+            </li>
+            <li>
+                <div class="project-header">
+                    <h3>JsonParser</h3>
+                    <span class="project-lang">Java</span>
+                </div>
+                <p>
+                    A lightweight parser designed to parse JSON strings into Java objects using
+                    recursive descent parsing.
+                </p>
+            </li>
+            <li>
+                <div class="project-header">
+                    <h3>HttpProxy</h3>
+                    <span class="project-lang">C++</span>
+                </div>
+                <p>
+                    A minimal HTTP proxy server using RAII for socket safety and custom URL parsing.
+                    It parses incoming HTTP requests and forwards them to remote hosts.
+                </p>
+            </li>
+            <li>
+                <div class="project-header">
+                    <h3>CacheCraft</h3>
+                    <span class="project-lang">Java</span>
+                </div>
+                <p>
+                    A comprehensive repository dedicated to the implementation and study of various
+                    caching mechanisms and design patterns.
+                </p>
+            </li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <p><a href="/blog" class="blog-link">Read my blog posts →</a></p>
+    </section>
 </BaseLayout>
+
+<style>
+    .intro {
+        margin-bottom: 3rem;
+    }
+
+    .intro h1 {
+        font-size: 2.5rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .lead {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: var(--color-text);
+        margin-top: 1.5rem;
+    }
+
+    .section {
+        margin-bottom: 3.5rem;
+    }
+
+    .section h2 {
+        font-size: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .skills-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 600px) {
+        .skills-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .skills-grid h3 {
+        font-size: 1.1rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .projects-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .projects-list li {
+        margin-bottom: 2rem;
+    }
+
+    .projects-list li:last-child {
+        margin-bottom: 0;
+    }
+
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-header h3 {
+        font-size: 1.15rem;
+        margin: 0;
+    }
+
+    .project-lang {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--color-muted);
+    }
+
+    .blog-link {
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .blog-link:hover {
+        text-decoration: underline;
+    }
+</style>
