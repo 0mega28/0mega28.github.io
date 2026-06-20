@@ -5,37 +5,30 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <BaseLayout title="Home">
     <article class="home-bio">
         <h1>Saksham Gupta</h1>
-        <!-- <p class="subheadline">Project Lead · Oracle</p> -->
 
         <div class="bio-content">
             <p>
-                I am a Project Lead at Oracle, where I lead architecture and development for
-                platform orchestration frameworks, legacy modernization, and performant web
-                technologies. As an IIT Roorkee Computer Science graduate, my focus lies in systems
-                programming, language runtimes, and compiler design. Through my work on declarative
-                DSL design and framework-agnostic rendering engines, I have optimized large-scale
-                enterprise services to achieve substantial reductions in CPU usage and API latency.
+                I build systems, abstractions, and platforms that make other engineers more
+                productive.
             </p>
 
             <p>
-                I joined Oracle as a Software Engineer, building the Siebel Open Integration project
-                from proof-of-concept to beta within twelve months, and was subsequently promoted to
-                Senior Software Engineer and Project Lead. I have led the delivery of a recursive
-                JSON-driven web component framework that simplified enterprise UI extensions, and
-                spearheaded our migration of core reactive systems to Java 21 virtual threads. In
-                2024, my team reached the top six globally in a corporate hackathon on Generative AI
-                out of over one hundred participating teams.
+                At my core, I am drawn to the mechanics of software: how it compiles, runs, and
+                distributes. My interests sit at the intersection of backend systems and platform
+                architecture, where I enjoy turning complex problems into clean, extensible
+                abstractions.
             </p>
 
             <p>
-                Outside of my day job, I explore operating systems from scratch, building a custom
-                32-bit UNIX clone kernel in C and assembly, alongside developing various parsers,
-                caching utilities, and compiler tools. I hold a B.Tech. in Computer Science from the
-                Indian Institute of Technology, Roorkee. I now focus my time primarily on writing
-                deep dives on systems engineering internals, looking for the best ways to share
-                technical insights about language runtimes and high-performance software
-                architectures.
+                I like understanding systems by recreating them. When I want to learn how something
+                works, I explore it through hands-on projects, whether that means writing a 32-bit
+                UNIX clone kernel from scratch, building custom parsers, or digging into runtime
+                internals. Currently, I am digging deep into distributed systems and reading <em
+                    >Designing Data-Intensive Applications</em
+                >.
             </p>
+
+            <p>This blog is where I document and write about these deep dives.</p>
 
             <p class="blog-cta">
                 <a href="/blog">Read the blog →</a>
@@ -46,7 +39,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 <style>
     .home-bio {
-        max-width: var(--max-width);
+        max-width: 70ch;
         margin: 0 auto;
     }
 
@@ -64,7 +57,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     .bio-content p {
         margin-bottom: 1.8rem;
-        text-align: justify;
     }
 
     .blog-cta {
