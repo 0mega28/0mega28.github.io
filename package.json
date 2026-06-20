@@ -16,5 +16,8 @@
     "@iconify-json/simple-icons": "^1.2.80",
     "astro": "^6.2.1",
     "astro-icon": "^1.1.5"
+  },
+  "devDependencies": {
+    "@shikijs/transformers": "^4.2.0"
   }
 }
