@@ -33,10 +33,10 @@
 
 ## Content
 
-- [ ] Write homepage (index.astro) (I'll share my resume and you can pick points from there)
-- [ ] Write /blog index page
-- [ ] Java Generics series landing page
-- [ ] Java Generics series — first post (type erasure)
+- [x] Write homepage (index.astro) (I'll share my resume and you can pick points from there)
+- [x] Write /blog index page
+- [x] Java Generics series landing page
+- [x] Java Generics series — first post (type erasure)
 
 ## Before Launch
 
