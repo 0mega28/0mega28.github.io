@@ -9,13 +9,38 @@ export async function getStaticPaths() {
     import.meta.env.DEV ? true : !p.data.draft
   );
 
-  return posts.map(post => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+  return posts.map(post => {
+    let prev = null;
+    let next = null;
+
+    if (post.data.series) {
+      const seriesPosts = posts
+        .filter(p => p.data.series === post.data.series)
+        .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+
+      const index = seriesPosts.findIndex(p => p.id === post.id);
+      if (index > 0) {
+        prev = {
+          id: seriesPosts[index - 1].id,
+          title: seriesPosts[index - 1].data.title,
+        };
+      }
+      if (index < seriesPosts.length - 1) {
+        next = {
+          id: seriesPosts[index + 1].id,
+          title: seriesPosts[index + 1].data.title,
+        };
+      }
+    }
+
+    return {
+      params: { slug: post.id },
+      props: { post, prev, next },
+    };
+  });
 }
 
-const { post } = Astro.props;
+const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 
 function formatDate(date: Date) {
@@ -45,6 +70,27 @@ const hasToc = headings.some(h => h.depth === 2 || h.depth === 3);
     
     <article class="post-content">
       <Content />
+      
+      {post.data.series && (prev || next) && (
+        <nav class="series-nav" aria-label="Series navigation">
+          {prev ? (
+            <a href={`/blog/${prev.id}`} class="series-nav-link prev">
+              <span class="series-nav-label">← Previous</span>
+              <span class="series-nav-title">{prev.title}</span>
+            </a>
+          ) : (
+            <div class="series-nav-spacer"></div>
+          )}
+          {next ? (
+            <a href={`/blog/${next.id}`} class="series-nav-link next">
+              <span class="series-nav-label">Next →</span>
+              <span class="series-nav-title">{next.title}</span>
+            </a>
+          ) : (
+            <div class="series-nav-spacer"></div>
+          )}
+        </nav>
+      )}
     </article>
   </div>
 </BaseLayout>
@@ -107,6 +153,52 @@ const hasToc = headings.some(h => h.depth === 2 || h.depth === 3);
   .post-content :global(h3) {
     margin-top: 2.5rem;
     margin-bottom: 1rem;
+  }
+
+  /* Series Navigation styling */
+  .series-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .series-nav-link {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    max-width: 48%;
+  }
+
+  .series-nav-link.next {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .series-nav-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 0.25rem;
+  }
+
+  .series-nav-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    line-height: 1.4;
+  }
+
+  .series-nav-link:hover .series-nav-title {
+    text-decoration: underline;
+  }
+
+  .series-nav-spacer {
+    flex: 1;
   }
 
   @media (min-width: 900px) {
