@@ -1,0 +1,81 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', p =>
+    import.meta.env.DEV ? true : !p.data.draft
+  );
+
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="blog-post">
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <div class="post-meta-container">
+        <time datetime={post.data.publishDate.toISOString()} class="post-date">
+          {formatDate(post.data.publishDate)}
+        </time>
+        {post.data.draft && <span class="draft-badge">draft</span>}
+      </div>
+    </header>
+    <div class="post-content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-post {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .post-header h1 {
+    font-size: 2.25rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-meta-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+  }
+
+  .post-content {
+    line-height: 1.8;
+  }
+
+  /* Make sure spacing is nice inside markdown posts */
+  .post-content :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content :global(h2),
+  .post-content :global(h3) {
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+  }
+</style>
