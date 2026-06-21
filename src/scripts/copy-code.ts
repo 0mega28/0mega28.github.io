@@ -5,9 +5,6 @@ function setupCopyButtons() {
         // Avoid duplicate buttons
         if (block.querySelector(".copy-code-button")) return;
 
-        // Ensure the container is relatively positioned
-        (block as HTMLElement).style.position = "relative";
-
         const button = document.createElement("button");
         button.className = "copy-code-button";
         button.type = "button";

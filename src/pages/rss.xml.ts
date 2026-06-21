@@ -1,18 +1,19 @@
 import rss from "@astrojs/rss";
 import { getCollection } from "astro:content";
 import type { APIContext } from "astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { draftFilter } from "../utils/collections";
 
 export async function GET(context: APIContext) {
-    const posts = await getCollection("blog", (p) => (import.meta.env.DEV ? true : !p.data.draft));
+    const posts = await getCollection("blog", draftFilter);
 
     // Sort posts by date descending
     posts.sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
 
     return rss({
-        title: "0mega28's Blog",
-        description:
-            "Deep dives into Java internals, distributed systems, and systems programming.",
-        site: context.site || "https://0mega28.github.io",
+        title: `${SITE_TITLE}'s Blog`,
+        description: SITE_DESCRIPTION,
+        site: context.site!,
         items: posts.map((post) => ({
             title: post.data.title,
             pubDate: post.data.publishDate,

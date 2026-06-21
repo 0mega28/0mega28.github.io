@@ -13,15 +13,14 @@ code {
     font-size: 0.85em;
 }
 
-@media (prefers-color-scheme: dark) {
-    :not(pre) > code {
-        background: #2a2a2a;
-        color: #e8e6e1;
-    }
+:root[data-theme="dark"] :not(pre) > code {
+    background: #2a2a2a;
+    color: #e8e6e1;
 }
 
 /* Shiki Code Block Container styling */
 .astro-code {
+    position: relative;
     padding: 1.25rem 0;
     border-radius: 6px;
     overflow-x: auto;
@@ -43,15 +42,13 @@ code {
 }
 
 /* Shiki Dual-theme dark mode support */
-@media (prefers-color-scheme: dark) {
-    .astro-code,
-    .astro-code span {
-        color: var(--shiki-dark) !important;
-        background-color: var(--shiki-dark-bg) !important;
-        font-style: var(--shiki-dark-font-style) !important;
-        font-weight: var(--shiki-dark-font-weight) !important;
-        text-decoration: var(--shiki-dark-text-decoration) !important;
-    }
+:root[data-theme="dark"] .astro-code,
+:root[data-theme="dark"] .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
 /* Line Highlighting (transformerMetaHighlight) */
@@ -59,10 +56,8 @@ code {
     --color-highlight-bg: rgba(37, 99, 235, 0.08);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-highlight-bg: rgba(96, 165, 250, 0.15);
-    }
+:root[data-theme="dark"] {
+    --color-highlight-bg: rgba(96, 165, 250, 0.15);
 }
 
 .astro-code .line.highlighted {

@@ -1,15 +1,20 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostMeta from "../../components/PostMeta.astro";
+import { draftFilter, bySeriesOrder } from "../../utils/collections";
 import { getReadingTime } from "../../utils/readingTime";
 
-const posts = await getCollection("blog", (p) => (import.meta.env.DEV ? true : !p.data.draft));
+const posts = await getCollection("blog", draftFilter);
 
 const seriesList = await getCollection("series");
 const seriesMetadataMap = new Map(seriesList.map((s) => [s.id, s.data]));
 
 const seriesPosts = posts.filter((p) => p.data.series);
 const standalonePosts = posts.filter((p) => !p.data.series);
+
+// Sort standalone posts by publishDate descending (Task 3.4)
+standalonePosts.sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
 
 const seriesMap = seriesPosts.reduce(
     (acc, post) => {
@@ -24,12 +29,8 @@ const seriesMap = seriesPosts.reduce(
 );
 
 Object.values(seriesMap).forEach((s) =>
-    s.posts.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0)),
+    s.posts.sort(bySeriesOrder),
 );
-
-function formatDate(date: Date) {
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-}
 ---
 
 <BaseLayout title="Blog">
@@ -46,13 +47,12 @@ function formatDate(date: Date) {
                     {posts.map((post) => (
                         <li class="post-item">
                             <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                            <div class="post-meta-row">
-                                {post.data.draft && <span class="draft-badge">draft</span>}
-                                <span class="post-meta">
-                                    {formatDate(post.data.publishDate)} ·{" "}
-                                    {getReadingTime(post.body || "")} min read
-                                </span>
-                            </div>
+                            <PostMeta
+                                publishDate={post.data.publishDate}
+                                readingTime={getReadingTime(post.body || "")}
+                                draft={post.data.draft}
+                                class="post-meta-row"
+                            />
                         </li>
                     ))}
                 </ol>
@@ -68,13 +68,12 @@ function formatDate(date: Date) {
                     {standalonePosts.map((post) => (
                         <li class="post-item">
                             <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                            <div class="post-meta-row">
-                                {post.data.draft && <span class="draft-badge">draft</span>}
-                                <span class="post-meta">
-                                    {formatDate(post.data.publishDate)} ·{" "}
-                                    {getReadingTime(post.body || "")} min read
-                                </span>
-                            </div>
+                            <PostMeta
+                                publishDate={post.data.publishDate}
+                                readingTime={getReadingTime(post.body || "")}
+                                draft={post.data.draft}
+                                class="post-meta-row"
+                            />
                         </li>
                     ))}
                 </ol>
@@ -133,11 +132,8 @@ function formatDate(date: Date) {
     }
 
     .post-meta-row {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-shrink: 0;
         margin-left: 1rem;
+        flex-shrink: 0;
     }
 
     @media (max-width: 600px) {

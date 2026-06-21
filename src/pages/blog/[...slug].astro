@@ -1,22 +1,36 @@
 ---
 import { getCollection, render } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getReadingTime } from "../../utils/readingTime";
-import TableOfContents from "../../components/TableOfContents.astro";
+import { draftFilter, bySeriesOrder } from "../../utils/collections";
+import PostLayout from "../../layouts/PostLayout.astro";
+import SeriesLayout from "../../layouts/SeriesLayout.astro";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("blog", (p) => (import.meta.env.DEV ? true : !p.data.draft));
+    const posts = await getCollection("blog", draftFilter);
     const seriesList = await getCollection("series");
+
+    const seriesMetadataMap = new Map(seriesList.map((s) => [s.id, s.data]));
+
+    // Pre-build Map<seriesId, sortedPosts[]> once instead of O(N^2) refiltering (Task 2.4)
+    const postsBySeries = new Map<string, typeof posts>();
+    posts.forEach((post) => {
+        if (post.data.series) {
+            if (!postsBySeries.has(post.data.series)) {
+                postsBySeries.set(post.data.series, []);
+            }
+            postsBySeries.get(post.data.series)!.push(post);
+        }
+    });
+    postsBySeries.forEach((seriesPosts) => {
+        seriesPosts.sort(bySeriesOrder);
+    });
 
     const postPaths = posts.map((post) => {
         let prev = null;
         let next = null;
+        let seriesTitle = "";
 
         if (post.data.series) {
-            const seriesPosts = posts
-                .filter((p) => p.data.series === post.data.series)
-                .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-
+            const seriesPosts = postsBySeries.get(post.data.series) || [];
             const index = seriesPosts.findIndex((p) => p.id === post.id);
             if (index > 0) {
                 prev = {
@@ -30,18 +44,20 @@ export async function getStaticPaths() {
                     title: seriesPosts[index + 1].data.title,
                 };
             }
+
+            // Fix series title display (Task 3.1)
+            const seriesMeta = seriesMetadataMap.get(post.data.series);
+            seriesTitle = seriesMeta ? seriesMeta.title : post.data.series;
         }
 
         return {
             params: { slug: post.id },
-            props: { type: "post" as const, post, prev, next },
+            props: { type: "post" as const, post, prev, next, seriesTitle },
         };
     });
 
     const seriesPaths = seriesList.map((series) => {
-        const seriesPosts = posts
-            .filter((p) => p.data.series === series.id)
-            .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+        const seriesPosts = postsBySeries.get(series.id) || [];
 
         return {
             params: { slug: series.id },
@@ -53,392 +69,30 @@ export async function getStaticPaths() {
 }
 
 const props = Astro.props;
-
-function formatDate(date: Date) {
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-}
 ---
 
 {
     props.type === "post"
         ? (() => {
-              const { post, prev, next } = props;
-              // We render render(post) dynamically. Since top-level await is allowed:
-              // Let's resolve the rendering of the post.
+              const { post, prev, next, seriesTitle } = props;
               return render(post).then(({ Content, headings }) => {
-                  const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
                   return (
-                      <BaseLayout
-                          title={post.data.title}
-                          description={post.data.description}
-                          ogType="article"
+                      <PostLayout
+                          post={post}
+                          headings={headings}
+                          seriesTitle={seriesTitle}
+                          prev={prev}
+                          next={next}
                       >
-                          <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
-                              <header class="post-header">
-                                  <a href="/blog" class="back-link">
-                                      ← All Posts
-                                  </a>
-                                  {post.data.series && (
-                                      <div class="post-series-meta">
-                                          Part of the{" "}
-                                          <a href={`/blog/${post.data.series}`}>
-                                              {post.data.series.replace("-", " ")}
-                                          </a>{" "}
-                                          series
-                                      </div>
-                                  )}
-                                  <h1>{post.data.title}</h1>
-                                  <div class="post-meta-container">
-                                      <time
-                                          datetime={post.data.publishDate.toISOString()}
-                                          class="post-date"
-                                      >
-                                          {formatDate(post.data.publishDate)}
-                                      </time>
-                                      <span class="post-reading-time">
-                                          · {getReadingTime(post.body || "")} min read
-                                      </span>
-                                      {post.data.draft && <span class="draft-badge">draft</span>}
-                                  </div>
-                              </header>
-
-                              {hasToc && (
-                                  <aside class="post-sidebar">
-                                      <TableOfContents headings={headings} />
-                                  </aside>
-                              )}
-
-                              <article class="post-content">
-                                  <Content />
-
-                                  {post.data.series && (prev || next) && (
-                                      <nav class="series-nav" aria-label="Series navigation">
-                                          {prev ? (
-                                              <a
-                                                  href={`/blog/${prev.id}`}
-                                                  class="series-nav-link prev"
-                                              >
-                                                  <span class="series-nav-label">← Previous</span>
-                                                  <span class="series-nav-title">{prev.title}</span>
-                                              </a>
-                                          ) : (
-                                              <div class="series-nav-spacer" />
-                                          )}
-                                          {next ? (
-                                              <a
-                                                  href={`/blog/${next.id}`}
-                                                  class="series-nav-link next"
-                                              >
-                                                  <span class="series-nav-label">Next →</span>
-                                                  <span class="series-nav-title">{next.title}</span>
-                                              </a>
-                                          ) : (
-                                              <div class="series-nav-spacer" />
-                                          )}
-                                      </nav>
-                                  )}
-                              </article>
-                          </div>
-                      </BaseLayout>
+                          <Content />
+                      </PostLayout>
                   );
               });
           })()
         : (() => {
               const { series, posts } = props;
               return (
-                  <BaseLayout title={series.data.title} description={series.data.description}>
-                      <div class="series-layout">
-                          <header class="series-header">
-                              <a href="/blog" class="back-link">
-                                  ← All Posts
-                              </a>
-                              <span class="series-badge">Series</span>
-                              <h1>{series.data.title}</h1>
-                              <p class="series-description">{series.data.description}</p>
-                          </header>
-
-                          <section class="series-posts-section">
-                              <h2 class="section-title">Posts in this series</h2>
-                              <ol class="series-post-list">
-                                  {posts.map((post, idx) => (
-                                      <li class="series-post-item">
-                                          <span class="post-number">
-                                              {String(idx + 1).padStart(2, "0")}.
-                                          </span>
-                                          <div class="post-info">
-                                              <a href={`/blog/${post.id}`}>{post.data.title}</a>
-                                              <p class="post-desc">{post.data.description}</p>
-                                              <div class="post-meta-row">
-                                                  <span class="post-meta">
-                                                      {formatDate(post.data.publishDate)} ·{" "}
-                                                      {getReadingTime(post.body || "")} min read
-                                                  </span>
-                                                  {post.data.draft && (
-                                                      <span class="draft-badge">draft</span>
-                                                  )}
-                                              </div>
-                                          </div>
-                                      </li>
-                                  ))}
-                              </ol>
-                          </section>
-                      </div>
-                  </BaseLayout>
+                  <SeriesLayout series={series} posts={posts} />
               );
           })()
 }
-
-<style>
-    .back-link {
-        display: inline-block;
-        font-size: 0.85rem;
-        font-family: var(--font-mono);
-        text-decoration: none;
-        color: var(--color-muted);
-        margin-bottom: 1.5rem;
-        transition: color 0.15s;
-    }
-
-    .back-link:hover {
-        color: var(--color-accent);
-    }
-
-    .post-series-meta {
-        font-size: 0.85rem;
-        font-family: var(--font-mono);
-        color: var(--color-muted);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .post-series-meta a {
-        color: var(--color-accent);
-        text-decoration: none;
-        font-weight: 500;
-    }
-
-    .post-series-meta a:hover {
-        text-decoration: underline;
-    }
-
-    .post-layout {
-        display: grid;
-        grid-template-areas:
-            "header"
-            "toc"
-            "content";
-        grid-template-columns: 100%;
-        gap: 1.5rem;
-    }
-
-    .post-layout.no-toc {
-        grid-template-areas:
-            "header"
-            "content";
-        max-width: var(--max-width);
-        margin: 0 auto;
-    }
-
-    .post-header {
-        grid-area: header;
-        margin-bottom: 1rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .post-header h1 {
-        font-size: 2.25rem;
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-    }
-
-    .post-meta-container {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.9rem;
-        color: var(--color-muted);
-    }
-
-    .post-sidebar {
-        grid-area: toc;
-    }
-
-    .post-content {
-        grid-area: content;
-        line-height: 1.8;
-    }
-
-    /* Make sure spacing is nice inside markdown posts */
-    .post-content :global(p) {
-        margin-bottom: 1.5rem;
-    }
-
-    .post-content :global(h2),
-    .post-content :global(h3) {
-        margin-top: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    /* Series Navigation styling */
-    .series-nav {
-        display: flex;
-        justify-content: space-between;
-        gap: 1.5rem;
-        margin-top: 4rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--color-border);
-    }
-
-    .series-nav-link {
-        display: flex;
-        flex-direction: column;
-        text-decoration: none;
-        max-width: 48%;
-    }
-
-    .series-nav-link.next {
-        align-items: flex-end;
-        text-align: right;
-    }
-
-    .series-nav-label {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--color-muted);
-        font-family: var(--font-mono);
-        margin-bottom: 0.25rem;
-    }
-
-    .series-nav-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--color-accent);
-        line-height: 1.4;
-    }
-
-    .series-nav-link:hover .series-nav-title {
-        text-decoration: underline;
-    }
-
-    .series-nav-spacer {
-        flex: 1;
-    }
-
-    /* Series Layout styling */
-    .series-layout {
-        max-width: var(--max-width);
-        margin: 0 auto;
-    }
-
-    .series-badge {
-        display: inline-block;
-        font-size: 0.75rem;
-        font-family: var(--font-mono);
-        color: var(--color-accent);
-        border: 1px solid var(--color-accent);
-        padding: 0.1em 0.5em;
-        border-radius: 3px;
-        margin-bottom: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .series-header h1 {
-        font-size: 2.25rem;
-        margin-top: 0;
-        margin-bottom: 0.75rem;
-    }
-
-    .series-description {
-        font-size: 1.15rem;
-        color: var(--color-muted);
-        line-height: 1.6;
-        margin-bottom: 0;
-    }
-
-    .series-posts-section {
-        margin-top: 3.5rem;
-    }
-
-    .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .series-post-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .series-post-item {
-        display: flex;
-        gap: 1rem;
-        padding: 1.5rem 0;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .series-post-item:last-child {
-        border-bottom: none;
-    }
-
-    .post-number {
-        font-family: var(--font-mono);
-        font-size: 1.1rem;
-        color: var(--color-muted);
-        font-weight: 500;
-        margin-top: 0.1rem;
-    }
-
-    .post-info {
-        flex: 1;
-    }
-
-    .post-info a {
-        font-size: 1.15rem;
-        font-weight: 600;
-        text-decoration: none;
-        color: var(--color-text);
-        transition: color 0.15s;
-    }
-
-    .post-info a:hover {
-        color: var(--color-accent);
-    }
-
-    .post-desc {
-        font-size: 0.95rem;
-        color: var(--color-muted);
-        margin-top: 0.4rem;
-        margin-bottom: 0.5rem;
-        line-height: 1.5;
-    }
-
-    .post-meta-row {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    @media (min-width: 900px) {
-        .post-layout:not(.no-toc) {
-            grid-template-columns: 1fr 280px;
-            grid-template-areas:
-                "header header"
-                "content toc";
-            gap: 3.5rem;
-        }
-
-        .post-sidebar {
-            position: sticky;
-            top: 2rem;
-            height: fit-content;
-        }
-    }
-</style>

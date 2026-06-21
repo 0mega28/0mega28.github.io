@@ -1,0 +1,197 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import PostMeta from "../components/PostMeta.astro";
+import SeriesNav from "../components/SeriesNav.astro";
+import { getReadingTime } from "../utils/readingTime";
+import type { CollectionEntry } from "astro:content";
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+    post: CollectionEntry<"blog">;
+    headings: MarkdownHeading[];
+    seriesTitle?: string;
+    prev: { id: string; title: string } | null;
+    next: { id: string; title: string } | null;
+}
+
+const { post, headings, seriesTitle, prev, next } = Astro.props;
+const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
+const readingTime = getReadingTime(post.body || "");
+---
+
+<BaseLayout
+    title={post.data.title}
+    description={post.data.description}
+    ogType="article"
+>
+    <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
+        <header class="post-header">
+            <a href="/blog" class="back-link">
+                ← All Posts
+            </a>
+            {post.data.series && (
+                <div class="post-series-meta">
+                    Part of the{" "}
+                    <a href={`/blog/${post.data.series}`}>
+                        {seriesTitle || post.data.series}
+                    </a>{" "}
+                    series
+                </div>
+            )}
+            <h1>{post.data.title}</h1>
+            <PostMeta
+                publishDate={post.data.publishDate}
+                readingTime={readingTime}
+                draft={post.data.draft}
+            />
+            {post.data.tags && post.data.tags.length > 0 && (
+                <div class="post-tags">
+                    {post.data.tags.map((tag) => (
+                        <span class="tag-pill">#{tag}</span>
+                    ))}
+                </div>
+            )}
+        </header>
+
+        {hasToc && (
+            <aside class="post-sidebar">
+                <TableOfContents headings={headings} />
+            </aside>
+        )}
+
+        <article class="post-content">
+            <slot />
+
+            {post.data.series && (
+                <SeriesNav prev={prev} next={next} />
+            )}
+        </article>
+    </div>
+</BaseLayout>
+
+<style>
+    .back-link {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-family: var(--font-mono);
+        text-decoration: none;
+        color: var(--color-muted);
+        margin-bottom: 1.5rem;
+        transition: color 0.15s;
+    }
+
+    .back-link:hover {
+        color: var(--color-accent);
+    }
+
+    .post-series-meta {
+        font-size: 0.85rem;
+        font-family: var(--font-mono);
+        color: var(--color-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .post-series-meta a {
+        color: var(--color-accent);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .post-series-meta a:hover {
+        text-decoration: underline;
+    }
+
+    .post-layout {
+        display: grid;
+        grid-template-areas:
+            "header"
+            "toc"
+            "content";
+        grid-template-columns: 100%;
+        gap: 1.5rem;
+    }
+
+    .post-layout.no-toc {
+        grid-template-areas:
+            "header"
+            "content";
+        max-width: var(--max-width);
+        margin: 0 auto;
+    }
+
+    .post-header {
+        grid-area: header;
+        margin-bottom: 1rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .post-header h1 {
+        font-size: 2.25rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .post-sidebar {
+        grid-area: toc;
+    }
+
+    .post-content {
+        grid-area: content;
+        line-height: 1.8;
+    }
+
+    /* Make sure spacing is nice inside markdown posts */
+    .post-content :global(p) {
+        margin-bottom: 1.5rem;
+    }
+
+    .post-content :global(h2),
+    .post-content :global(h3) {
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    @media (min-width: 900px) {
+        .post-layout:not(.no-toc) {
+            grid-template-columns: 1fr 280px;
+            grid-template-areas:
+                "header header"
+                "content toc";
+            gap: 3.5rem;
+        }
+
+        .post-sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+    }
+
+    .post-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+    }
+
+    .tag-pill {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--color-accent);
+        background-color: var(--color-bg);
+        border: 1px solid var(--color-border);
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        transition: all 0.15s ease;
+    }
+
+    .tag-pill:hover {
+        background-color: var(--color-accent);
+        color: var(--color-bg);
+        border-color: var(--color-accent);
+    }
+</style>

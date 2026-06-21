@@ -2,20 +2,24 @@
 import "../styles/global.css";
 import "../styles/code.css";
 import { Icon } from "astro-icon/components";
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from "../consts";
 
 interface Props {
     title: string;
     description?: string;
+    ogImage?: string;
     ogType?: "website" | "article";
 }
 
 const {
     title,
-    description = "Deep dives into Java internals, distributed systems, and systems programming.",
+    description = SITE_DESCRIPTION,
+    ogImage,
     ogType = "website",
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.github.io").href;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || SITE_URL).href;
+const ogImageURL = new URL(ogImage || "/og-image.jpg", Astro.site || SITE_URL).href;
 ---
 
 <html lang="en">
@@ -30,14 +34,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content={ogType} />
         <meta property="og:url" content={canonicalURL} />
-        <meta property="og:title" content={`${title} · 0mega28`} />
+        <meta property="og:title" content={`${title} · ${SITE_TITLE}`} />
         <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImageURL} />
 
         <!-- Twitter -->
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={canonicalURL} />
-        <meta property="twitter:title" content={`${title} · 0mega28`} />
+        <meta property="twitter:title" content={`${title} · ${SITE_TITLE}`} />
         <meta property="twitter:description" content={description} />
+        <meta property="twitter:image" content={ogImageURL} />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,12 +51,23 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
             href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet"
         />
-        <title>{title} · 0mega28</title>
+        <title>{title}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="alternate" type="application/rss+xml" title="0mega28's Blog" href="/rss.xml" />
+        <link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE}'s Blog`} href="/rss.xml" />
         <script src="../scripts/copy-code.ts"></script>
+        <script is:inline>
+            (function() {
+                const storedTheme = localStorage.getItem("theme");
+                if (storedTheme) {
+                    document.documentElement.setAttribute("data-theme", storedTheme);
+                } else {
+                    const userPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                    document.documentElement.setAttribute("data-theme", userPrefersDark ? "dark" : "light");
+                }
+            })();
+        </script>
     </head>
     <body>
         <header>
@@ -93,14 +110,34 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
                     <Icon name="lucide:mail" size={20} />
                     <span class="nav-label">&nbsp;Mail</span>
                 </a>
+                <button id="theme-toggle" aria-label="Toggle theme" class="theme-toggle-btn">
+                    <Icon name="lucide:sun" class="sun-icon" size={20} />
+                    <Icon name="lucide:moon" class="moon-icon" size={20} />
+                </button>
             </nav>
         </header>
         <main>
             <slot />
         </main>
         <footer>
-            <p>© {new Date().getFullYear()} 0mega28</p>
+            <p>© {new Date().getFullYear()} {SITE_TITLE}</p>
         </footer>
+        <script>
+            function initThemeToggle() {
+                const themeToggle = document.getElementById("theme-toggle");
+                if (!themeToggle) return;
+
+                themeToggle.addEventListener("click", () => {
+                    const currentTheme = document.documentElement.getAttribute("data-theme");
+                    const newTheme = currentTheme === "dark" ? "light" : "dark";
+                    document.documentElement.setAttribute("data-theme", newTheme);
+                    localStorage.setItem("theme", newTheme);
+                });
+            }
+
+            initThemeToggle();
+            document.addEventListener("astro:after-swap", initThemeToggle);
+        </script>
     </body>
 </html>
 
@@ -183,5 +220,34 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://0mega28.
         border-top: 1px solid var(--color-border);
         font-size: 0.85rem;
         color: var(--color-muted);
+    }
+
+    .theme-toggle-btn {
+        background: none;
+        border: none;
+        color: var(--color-muted);
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s, transform 0.15s;
+    }
+
+    .theme-toggle-btn:hover {
+        color: var(--color-accent);
+        transform: scale(1.05);
+    }
+
+    .sun-icon {
+        display: none;
+    }
+
+    :global([data-theme="dark"]) .sun-icon {
+        display: block;
+    }
+
+    :global([data-theme="dark"]) .moon-icon {
+        display: none;
     }
 </style>

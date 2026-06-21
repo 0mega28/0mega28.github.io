@@ -44,19 +44,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         border-radius: 4px;
         font-size: 0.95rem;
         font-weight: 500;
-        transition: background-color 0.15s;
+        transition: background-color 0.15s, color 0.15s;
     }
 
     .home-link:hover {
-        background: #1d4ed8;
+        background: var(--color-accent-hover);
     }
 
-    @media (prefers-color-scheme: dark) {
-        .home-link {
-            color: #141413; /* Use background color for contrast on dark theme */
-        }
-        .home-link:hover {
-            background: #93c5fd;
-        }
+    :global([data-theme="dark"]) .home-link {
+        color: var(--color-bg); /* Use background color for contrast on dark theme */
     }
 </style>

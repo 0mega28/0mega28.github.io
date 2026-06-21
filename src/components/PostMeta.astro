@@ -1,0 +1,60 @@
+---
+import { formatDate } from "../utils/collections";
+
+interface Props {
+    publishDate: Date;
+    readingTime: number;
+    draft?: boolean;
+    class?: string;
+}
+
+const { publishDate, readingTime, draft = false, class: className } = Astro.props;
+---
+
+<div class:list={["post-meta-row", className]}>
+    <time datetime={publishDate.toISOString()} class="post-date">
+        {formatDate(publishDate)}
+    </time>
+    <span class="separator">·</span>
+    <span class="reading-time">{readingTime} min read</span>
+    {draft && <span class="draft-badge">draft</span>}
+</div>
+
+<style>
+    .post-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        color: var(--color-muted);
+    }
+
+    .separator {
+        color: var(--color-muted);
+        opacity: 0.8;
+    }
+
+    .draft-badge {
+        font-size: 0.72rem;
+        font-family: var(--font-heading);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        color: #ef4444;
+        background-color: rgba(239, 68, 68, 0.06);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        padding: 0.15em 0.5em;
+        border-radius: 4px;
+        margin-left: 0.4rem;
+        vertical-align: middle;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    :global([data-theme="dark"]) .draft-badge {
+        color: #fca5a5;
+        background-color: rgba(239, 68, 68, 0.12);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+</style>

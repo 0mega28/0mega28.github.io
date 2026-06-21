@@ -16,18 +16,18 @@
     --color-bg: #fafaf8;
     --color-surface: #fff;
     --color-accent: #4f46e5;
+    --color-accent-hover: #4338ca;
     --max-width: 1000px;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-text: #e8e6e1;
-        --color-muted: #a0998e;
-        --color-border: #222221;
-        --color-bg: #141413;
-        --color-surface: #1e1e1c;
-        --color-accent: #818cf8;
-    }
+:root[data-theme="dark"] {
+    --color-text: #e8e6e1;
+    --color-muted: #a0998e;
+    --color-border: #222221;
+    --color-bg: #141413;
+    --color-surface: #1e1e1c;
+    --color-accent: #818cf8;
+    --color-accent-hover: #a5b4fc;
 }
 
 body {
@@ -93,33 +93,4 @@ main {
     margin-top: -1rem;
 }
 
-.post-meta {
-    font-size: 0.85rem;
-    color: var(--color-muted);
-    margin-left: 0.5rem;
-}
 
-.draft-badge {
-    font-size: 0.72rem;
-    font-family: var(--font-heading);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-    color: #ef4444;
-    background-color: rgba(239, 68, 68, 0.06);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    padding: 0.1em 0.5em;
-    border-radius: 4px;
-    margin-left: 0.6rem;
-    vertical-align: middle;
-    display: inline-flex;
-    align-items: center;
-}
-
-@media (prefers-color-scheme: dark) {
-    .draft-badge {
-        color: #fca5a5;
-        background-color: rgba(239, 68, 68, 0.12);
-        border-color: rgba(239, 68, 68, 0.3);
-    }
-}

@@ -1,0 +1,83 @@
+---
+interface SeriesPostInfo {
+    id: string;
+    title: string;
+}
+
+interface Props {
+    prev: SeriesPostInfo | null;
+    next: SeriesPostInfo | null;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+    (prev || next) && (
+        <nav class="series-nav" aria-label="Series navigation">
+            {prev ? (
+                <a href={`/blog/${prev.id}`} class="series-nav-link prev">
+                    <span class="series-nav-label">← Previous</span>
+                    <span class="series-nav-title">{prev.title}</span>
+                </a>
+            ) : (
+                <div class="series-nav-spacer" />
+            )}
+            {next ? (
+                <a href={`/blog/${next.id}`} class="series-nav-link next">
+                    <span class="series-nav-label">Next →</span>
+                    <span class="series-nav-title">{next.title}</span>
+                </a>
+            ) : (
+                <div class="series-nav-spacer" />
+            )}
+        </nav>
+    )
+}
+
+<style>
+    .series-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-border);
+    }
+
+    .series-nav-link {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        max-width: 48%;
+    }
+
+    .series-nav-link.next {
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .series-nav-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-muted);
+        font-family: var(--font-mono);
+        margin-bottom: 0.25rem;
+    }
+
+    .series-nav-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--color-accent);
+        line-height: 1.4;
+    }
+
+    .series-nav-link:hover .series-nav-title {
+        text-decoration: underline;
+    }
+
+    .series-nav-spacer {
+        flex: 1;
+    }
+</style>

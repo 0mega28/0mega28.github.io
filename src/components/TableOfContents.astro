@@ -36,10 +36,8 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.015);
     }
 
-    @media (prefers-color-scheme: dark) {
-        .toc-container {
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        }
+    :global([data-theme="dark"]) .toc-container {
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
     }
 
     .toc-title {

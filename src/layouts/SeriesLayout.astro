@@ -1,0 +1,157 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import PostMeta from "../components/PostMeta.astro";
+import { getReadingTime } from "../utils/readingTime";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+    series: CollectionEntry<"series">;
+    posts: CollectionEntry<"blog">[];
+}
+
+const { series, posts } = Astro.props;
+---
+
+<BaseLayout title={series.data.title} description={series.data.description}>
+    <div class="series-layout">
+        <header class="series-header">
+            <a href="/blog" class="back-link">
+                ← All Posts
+            </a>
+            <span class="series-badge">Series</span>
+            <h1>{series.data.title}</h1>
+            <p class="series-description">{series.data.description}</p>
+        </header>
+
+        <section class="series-posts-section">
+            <h2 class="section-title">Posts in this series</h2>
+            <ol class="series-post-list">
+                {posts.map((post, idx) => (
+                    <li class="series-post-item">
+                        <span class="post-number">
+                            {String(idx + 1).padStart(2, "0")}.
+                        </span>
+                        <div class="post-info">
+                            <a href={`/blog/${post.id}`}>{post.data.title}</a>
+                            <p class="post-desc">{post.data.description}</p>
+                            <PostMeta
+                                publishDate={post.data.publishDate}
+                                readingTime={getReadingTime(post.body || "")}
+                                draft={post.data.draft}
+                            />
+                        </div>
+                    </li>
+                ))}
+            </ol>
+        </section>
+    </div>
+</BaseLayout>
+
+<style>
+    .back-link {
+        display: inline-block;
+        font-size: 0.85rem;
+        font-family: var(--font-mono);
+        text-decoration: none;
+        color: var(--color-muted);
+        margin-bottom: 1.5rem;
+        transition: color 0.15s;
+    }
+
+    .back-link:hover {
+        color: var(--color-accent);
+    }
+
+    /* Series Layout styling */
+    .series-layout {
+        max-width: var(--max-width);
+        margin: 0 auto;
+    }
+
+    .series-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        color: var(--color-accent);
+        border: 1px solid var(--color-accent);
+        padding: 0.1em 0.5em;
+        border-radius: 3px;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .series-header h1 {
+        font-size: 2.25rem;
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+    }
+
+    .series-description {
+        font-size: 1.15rem;
+        color: var(--color-muted);
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .series-posts-section {
+        margin-top: 3.5rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .series-post-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .series-post-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem 0;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .series-post-item:last-child {
+        border-bottom: none;
+    }
+
+    .post-number {
+        font-family: var(--font-mono);
+        font-size: 1.1rem;
+        color: var(--color-muted);
+        font-weight: 500;
+        margin-top: 0.1rem;
+    }
+
+    .post-info {
+        flex: 1;
+    }
+
+    .post-info a {
+        font-size: 1.15rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--color-text);
+        transition: color 0.15s;
+    }
+
+    .post-info a:hover {
+        color: var(--color-accent);
+    }
+
+    .post-desc {
+        font-size: 0.95rem;
+        color: var(--color-muted);
+        margin-top: 0.4rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+</style>
