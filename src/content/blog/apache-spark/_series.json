@@ -1,0 +1,4 @@
+{
+    "title": "Apache Spark",
+    "description": "An exploration of Apache Spark — dissecting the architecture, design trade-offs, and distributed computing principles that power the engine under the hood."
+}
