@@ -7,6 +7,9 @@
 - **Vary sentence structure.** Don't open multiple sections with rhetorical questions. Mix declarative and interrogative.
 - **Keep conclusions flat.** No blockquoted aphorisms with bold openers. Write takeaways as regular prose.
 - **Be direct, not grand.** Prefer "this mattered" over "this was revolutionary." Prefer "what's interesting is" over "the genius lies in."
+- **Don't overuse emdashes (—)**
+- **No "X is one of those" openings.** Avoid framing like "X is one of those concepts that every developer hears about." It reads as filler.
+- **Lead with the topic, not the reader.** Open by stating what the thing *is* or what question it answers, not how the audience relates to it.
 
 ## Review Workflow
 
