@@ -142,7 +142,27 @@ void process(List<Integer> integers) { ... }
 
 After erasure, both signatures become `process(List)`.
 
-Heap pollution is the subtlest consequence. If you mix raw types with parameterized types (or suppress unchecked warnings), the JVM will happily store an `Integer` in what the source code declared as a `List<String>`. The `ClassCastException` won't surface until someone reads from the list and hits the inserted `checkcast`, potentially far from the code that caused the corruption.
+Heap pollution is the subtlest consequence. Since the JVM doesn't track type arguments, nothing stops you from smuggling the wrong type into a generic collection at runtime:
+
+```java
+List<String> strings = new ArrayList<>();
+strings.add("hello");
+
+List raw = strings;           // erase to raw type
+List<Integer> integers = raw; // reinterpret as List<Integer>
+integers.add(42);             // JVM sees List.add(Object) — no check
+
+System.out.println(raw);
+// [hello, 42] — both elements coexist in one list
+
+Integer n = integers.get(0);
+// ClassCastException: String cannot be cast to Integer
+
+String s = strings.get(1);
+// ClassCastException: Integer cannot be cast to String
+```
+
+The `add` succeeds because the JVM dispatches it as `List.add(Object)`. It has no idea `integers` was declared as `List<Integer>`. The exceptions only surface on `get`, when the compiler's inserted `checkcast` tries to narrow the returned `Object` to the declared type. The corruption happened at `integers.add(42)`. The crash happens somewhere else entirely, on a read through a different reference.
 
 ---
 
