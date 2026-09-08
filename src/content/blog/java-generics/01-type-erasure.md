@@ -1,24 +1,32 @@
 ---
-title: "Type Erasure in Java Generics"
-description: "How the Java compiler erases generic type information at runtime."
-publishDate: 2026-01-01
+title: "The JVM Has Never Heard of Your List<String>"
+description: "You write List<String>. The compiler checks it, enforces it, then erases it. By the time bytecode runs, the JVM sees List — nothing more. Here's what that means."
+publishDate: 2026-09-07
 series: "java-generics"
 order: 1
-tags: ["java", "generics", "jvm"]
-draft: true
+tags: ["java", "generics", "jvm", "type-erasure", "bytecode"]
+draft: false
 ---
 
-Java generics were introduced in JDK 5 to provide compile-time type safety. However, to maintain backward compatibility with older JVM versions, the compiler implements generics using a process called type erasure.
+Run this:
 
-This post looks at how type erasure works under the hood and what the compiler does to your code during compilation.
+```java
+List<String> strings = new ArrayList<>();
+List<Integer> integers = new ArrayList<>();
 
-## How Type Erasure Works
+System.out.println(strings.getClass() == integers.getClass());
+// true
+```
 
-When the Java compiler compiles your generic classes and methods, it replaces all generic type parameters with their bounds. If a type parameter is unbounded, it is replaced with `Object`.
+Same class. At runtime, `List<String>` and `List<Integer>` resolve to the same `Class` object. The JVM has no idea you asked for different types. It sees `ArrayList` both times — no parameter, no distinction, nothing.
 
-### Unbounded Type Parameters
+It's a deliberate design decision behind Java generics: the compiler enforces your types, then strips them out before the JVM ever sees your code. The mechanism is called **type erasure**, and every generic quirk in the language traces back to it.
 
-Consider the following simple generic box class:
+---
+
+## What the Compiler Does to Your Code
+
+Write a generic class:
 
 ```java
 public class Box<T> {
@@ -34,25 +42,30 @@ public class Box<T> {
 }
 ```
 
-Because `T` is unbounded, the Java compiler erases `T` and replaces it with `Object`. The compiled bytecode is equivalent to:
+Compile it and run `javap -c -p Box`. Here's what the JVM actually received:
 
-```java
-public class Box {
-    private Object value;
+```plaintext
+public class Box<T> {
+  private T value;
 
-    public void set(Object value) {
-        this.value = value;
-    }
+  public void set(T);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: putfield      #7       // Field value:Ljava/lang/Object;
+         5: return
 
-    public Object get() {
-        return value;
-    }
+  public T get();
+    Code:
+         0: aload_0
+         1: getfield      #7       // Field value:Ljava/lang/Object;
+         4: areturn
 }
 ```
 
-### Bounded Type Parameters
+Look at the comments the disassembler generates. `Field value:Ljava/lang/Object;`. The field's type isn't `T` — it's `Object`. The method `set` takes an `Object`. The method `get` returns an `Object`. The bytecode descriptors use `java.lang.Object` everywhere `T` appeared in the source. (The `T` still visible in javap's method headers comes from a metadata attribute the JVM ignores — more on that in a later post.)
 
-If a type parameter is bounded, the compiler uses the first bound instead. For example:
+If the type parameter has a bound (say, `<T extends Number>`), the compiler uses that bound instead:
 
 ```java
 public class NumericBox<T extends Number> {
@@ -64,40 +77,85 @@ public class NumericBox<T extends Number> {
 }
 ```
 
-The compiler replaces `T` with `Number`. After compilation, the class becomes:
+Here, `T` becomes `Number` in the compiled class. The rule is mechanical: unbounded parameters erase to `Object`, bounded parameters erase to their first bound.
 
-```java
-public class NumericBox {
-    private Number value;
+---
 
-    public double doubleValue() {
-        return value.doubleValue();
-    }
-}
-```
+## Where the Casts Come From
 
-## Inspecting Compiled Bytecode
+If `Box.get()` returns `Object` at the bytecode level, how does `String value = box.get()` compile without a cast in the source?
 
-We can inspect the compiled bytecode of our generic classes using the `javap` command-line tool. Let's look at what the compiler generates for a method invocation that uses a generic class.
+The compiler inserts a cast at the call site. Look at the bytecode for a method that uses `Box<String>`:
 
-Here is a snippet of bytecode showing how the JVM performs casts at the call site:
-
-```plaintext {3,5}
-0: new           #2  // class Box
+```plaintext
+0: new           #7       // class Box
 3: dup
-4: invokespecial #3  // Method Box."<init>":()V
+4: invokespecial #9       // Method Box."<init>":()V
 7: astore_1
 8: aload_1
-9: ldc           #4  // String Hello
-11: invokevirtual #5  // Method Box.set:(Ljava/lang/Object;)V
+9: ldc           #10      // String hello
+11: invokevirtual #12     // Method Box.set:(Ljava/lang/Object;)V
 14: aload_1
-15: invokevirtual #6  // Method Box.get:()Ljava/lang/Object;
-18: checkcast     #7  // class java/lang/String
+15: invokevirtual #16     // Method Box.get:()Ljava/lang/Object;
+18: checkcast     #20     // class java/lang/String
 21: astore_2
 ```
 
-Notice the call to `Box.set` takes an `Object` reference at line 11. When calling `Box.get` at line 15, the compiler inserts a `checkcast` instruction at line 18 to cast the returned `Object` back to a `String`. This is how type safety is enforced without the JVM knowing about generics at runtime.
+Line 11: `Box.set` receives a `java/lang/Object`. Line 15: `Box.get` returns a `java/lang/Object`. Line 18: the compiler inserted a `checkcast` instruction to narrow the `Object` back to `String`.
 
-## Summary
+This is the entire generic contract at runtime: the JVM stores `Object`, returns `Object`, and the compiler scatters `checkcast` instructions at every call site to enforce the types you declared. If a cast fails, you get a `ClassCastException` — the same exception you'd get without generics at all.
 
-Type erasure is a compile-time mechanism. The compiler replaces type parameters with bounds or `Object`, inserts explicit casts at call sites, and generates bridge methods when necessary to preserve polymorphism. This allows new generic code to run on older Java virtual machines seamlessly.
+---
+
+## Why Erasure Exists
+
+Java 5 shipped generics in 2004. By that point, billions of lines of pre-generic Java were running in production. The hard constraint wasn't that older JVMs had to run new binaries—Java 5 bumped the classfile version anyway. The true constraint was *migration compatibility*. The ecosystem couldn't fracture. Pre-generic legacy code and newly written generic code had to interoperate seamlessly in the same heap, calling each other's methods without adapter layers or forced recompilation.
+
+To pull this off, the bytecode execution model couldn't change. No new instructions. Generics had to be a source-level abstraction that compiled down to the exact same execution instructions you'd write by hand with casts. The compiler does the heavy lifting `[1]`, and the JVM execution engine remains completely blind to your types. (The compiler *does* leave metadata in the classfile's `Signature` attribute for reflection to read—which is how frameworks like Spring work, and what I'll cover in the next post—but the runtime instructions ignore it entirely.)
+
+This wasn't an oversight or a shortcut. The GJ (Generic Java) paper `[2]` laid out this **homogeneous translation** deliberately: every instantiation of a generic class shares a single compiled class. The alternative—generating a separate class for each instantiation, as C++ templates and later C# reified generics do—was ruled out because it would have shattered backward compatibility.
+
+---
+
+## What Erasure Breaks
+
+The consequences are concrete. Every one of these is a direct result of type information not existing at runtime.
+
+`instanceof` doesn't work with type parameters. This code won't compile:
+
+```java
+if (obj instanceof List<String>) { ... }
+// error: illegal generic type for instanceof
+```
+
+The check is impossible because at runtime, every `List` is the same `List`. The JVM has no way to distinguish a `List` that was declared as `List<String>` from one declared as `List<Integer>`.
+
+You can't create generic arrays. `new T[]` is illegal. Since the JVM doesn't know what `T` is, it can't allocate an array of the correct component type. The standard workaround (`(T[]) new Object[n]`) produces an unchecked cast warning because the cast can't be verified at runtime.
+
+You can't overload on type parameters alone. These two methods have the same erasure and can't coexist in the same class:
+
+```java
+void process(List<String> strings) { ... }
+void process(List<Integer> integers) { ... }
+// error: both methods have same erasure
+```
+
+After erasure, both signatures become `process(List)`.
+
+Heap pollution is the subtlest consequence. If you mix raw types with parameterized types (or suppress unchecked warnings), the JVM will happily store an `Integer` in what the source code declared as a `List<String>`. The `ClassCastException` won't surface until someone reads from the list and hits the inserted `checkcast`, potentially far from the code that caused the corruption.
+
+---
+
+## What Comes Next: Valhalla
+
+Project Valhalla `[3]` is the long-running effort to give the JVM actual awareness of generic type arguments. The headline feature for generics is **specialized generics**: a `List<int>` that stores primitive ints directly, without boxing, because the JVM knows the type argument at runtime. If Valhalla ships in its current form, it will be the first time in Java's history that the JVM sees what the programmer wrote inside the angle brackets. Twenty years of erasure, slowly unwinding.
+
+---
+
+## References
+
+[1] Gosling, J. et al. *The Java Language Specification*, §4.6: Type Erasure. https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.6
+
+[2] Bracha, G. et al. "Making the future safe for the past: Adding Genericity to the Java Programming Language." OOPSLA, 1998. https://homepages.inf.ed.ac.uk/wadler/gj/Documents/gj-oopsla.pdf
+
+[3] OpenJDK. "Project Valhalla." https://openjdk.org/projects/valhalla/
