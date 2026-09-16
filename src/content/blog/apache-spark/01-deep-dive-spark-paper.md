@@ -14,7 +14,7 @@ But that answer completely misses the point.
 
 Simply throwing RAM at a distributed computing problem doesn't make it fault-tolerant, scalable, or elegant. In fact, keeping massive, volatile datasets in memory across a cluster of commodity hardware actually makes fault tolerance *significantly* harder. If a node crashes, your volatile memory state vanishes.
 
-The real magic of the 2012 NSDI paper, *Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing* by Matei Zaharia et al. `[1]`, isn't that it used RAM. What's interesting is how the authors designed a distributed execution model around a **functional programming paradigm** to solve the state recovery problem without paying a continuous performance tax.
+The real magic of the 2012 NSDI paper, *Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing* by Matei Zaharia et al.<sup><a href="#ref-1">[1]</a></sup>, isn't that it used RAM. What's interesting is how the authors designed a distributed execution model around a **functional programming paradigm** to solve the state recovery problem without paying a continuous performance tax.
 
 
 
@@ -26,7 +26,7 @@ At the heart of the paper is the **Resilient Distributed Dataset (RDD)**. Mathem
 
 To understand why this mattered, we have to look at what came before. In 2012, distributed frameworks fell into two categories:
 
-- **Acyclic Data Flow Systems (like MapReduce `[2]`):** These frameworks process data by reading it from stable storage (HDFS), running a Map or Reduce operation, and writing the intermediate results back to physical disk. If you need to chain operations (like in iterative machine learning or SQL queries), you must constantly write to and read from disk.
+- **Acyclic Data Flow Systems (like MapReduce<sup><a href="#ref-2">[2]</a></sup>):** These frameworks process data by reading it from stable storage (HDFS), running a Map or Reduce operation, and writing the intermediate results back to physical disk. If you need to chain operations (like in iterative machine learning or SQL queries), you must constantly write to and read from disk.
 
 - **Distributed Shared Memory (DSM) Systems:** These allow arbitrary, fine-grained reads and writes to a shared, mutable in-memory state across a cluster.
 
@@ -147,6 +147,6 @@ The next time you write a Spark job, remember that the speed doesn't come from R
 
 ## References
 
-[1] Zaharia, M. et al. "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing." NSDI, 2012. https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf
+<span id="ref-1">[1]</span> Zaharia, M. et al. "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory Cluster Computing." NSDI, 2012. <https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf>
 
-[2] Dean, J. & Ghemawat, S. "MapReduce: Simplified Data Processing on Large Clusters." OSDI, 2004. https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf
+<span id="ref-2">[2]</span> Dean, J. & Ghemawat, S. "MapReduce: Simplified Data Processing on Large Clusters." OSDI, 2004. <https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf>

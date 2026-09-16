@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import "../styles/code.css";
 import { Icon } from "astro-icon/components";
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from "../consts";
+import { SITE_TITLE, SITE_AUTHOR, SITE_DESCRIPTION, SITE_URL } from "../consts";
 
 interface Props {
     title: string;
@@ -20,6 +20,21 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || SITE_URL).href;
 const ogImageURL = new URL(ogImage || "/og-image.jpg", Astro.site || SITE_URL).href;
+const isHomePage = Astro.url.pathname === "/";
+
+const websiteSchema = isHomePage
+    ? JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE_TITLE,
+          url: (Astro.site || SITE_URL).toString(),
+          description: SITE_DESCRIPTION,
+          author: {
+              "@type": "Person",
+              name: SITE_AUTHOR,
+          },
+      })
+    : null;
 ---
 
 <html lang="en">
@@ -56,6 +71,8 @@ const ogImageURL = new URL(ogImage || "/og-image.jpg", Astro.site || SITE_URL).h
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE}'s Blog`} href="/rss.xml" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous" />
+        {websiteSchema && <script type="application/ld+json" set:html={websiteSchema} />}
         <script src="../scripts/copy-code.ts"></script>
         <script is:inline>
             (function() {

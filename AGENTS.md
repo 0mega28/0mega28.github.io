@@ -28,9 +28,11 @@
 
 ## References & Citations
 
-- Use **numbered footnote-style** references: `[1]`, `[2]`, etc. inline.
+- Use **numbered footnote-style** references that link to the References section.
+- **Inline citations** should be superscript anchor links: `<sup><a href="#ref-1">[1]</a></sup>`
 - **Do not** use inline hyperlinks in blog body text.
-- Add a `## References` section at the bottom with full citations and URLs.
+- Add a `## References` section at the bottom with full citations, URLs, and matching anchor IDs.
+- Each reference entry should start with: `<span id="ref-1">[1]</span>`
 
 ## Git Commits
 
