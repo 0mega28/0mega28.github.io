@@ -85,8 +85,8 @@ const breadcrumbSchema = JSON.stringify({
     description={post.data.description}
     ogType="article"
 >
-    <script type="application/ld+json" set:html={articleSchema} />
-    <script type="application/ld+json" set:html={breadcrumbSchema} />
+    <script is:inline type="application/ld+json" set:html={articleSchema} />
+    <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
     <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
         <header class="post-header">
             <a href="/blog" class="back-link">

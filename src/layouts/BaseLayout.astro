@@ -72,7 +72,7 @@ const websiteSchema = isHomePage
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE}'s Blog`} href="/rss.xml" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous" />
-        {websiteSchema && <script type="application/ld+json" set:html={websiteSchema} />}
+        {websiteSchema && <script is:inline type="application/ld+json" set:html={websiteSchema} />}
         <script src="../scripts/copy-code.ts"></script>
         <script is:inline>
             (function() {

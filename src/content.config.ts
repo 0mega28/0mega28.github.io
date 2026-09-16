@@ -14,6 +14,7 @@ const blog = defineCollection({
             draft: z.boolean().default(false),
             series: z.string().optional(),
             order: z.number().optional(),
+            ogImage: z.string().optional(),
         })
         .superRefine((data, ctx) => {
             // TODO Make Extendable
