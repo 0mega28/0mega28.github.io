@@ -199,6 +199,42 @@ sequenceDiagram
 
 The marker wave slices the distributed execution history into pre-marker and post-marker epochs, capturing in-flight messages on each channel while ensuring that no orphan messages cross the boundary.
 
+<details>
+<summary>A Puzzle: Did the snapshot miss P1's state transition?</summary>
+
+Consider this scenario:
+
+Two processes, $P_1$ and $P_2$, communicate over FIFO channels $c_{12}$ and $c_{21}$.
+
+1. $P_1$ starts a snapshot while an incoming message $m_{21}$ from $P_2$ is in transit on $c_{21}$.
+2. $P_1$ snapshots its memory, sends a marker on $c_{12}$, and begins recording incoming messages on $c_{21}$.
+3. Next, $m_{21}$ arrives at $P_1$.
+4. Later, the marker reaches $P_2$, triggering $P_2$'s snapshot.
+
+At first glance, something seems missing: $P_1$'s recorded memory never captured the state transition caused by $m_{21}$. Did the snapshot fail to record this update?
+
+The answer is no. In the snapshot timeline, $m_{21}$ had not yet reached $P_1$ when the cut occurred. Because it was in transit across the cut boundary, it belongs in **channel state**, not node memory:
+
+| Component | State in Snapshot | Notes |
+| :--- | :--- | :--- |
+| Process $P_1$ | Pre-$m_{21}$ memory | Transition not yet applied |
+| Process $P_2$ | Post-send memory | Reflects that $m_{21}$ was sent |
+| Channel $c_{21}$ | $[m_{21}]$ | Message captured in transit |
+
+Recall that a distributed snapshot captures both process memory and channel logs:
+
+$$\text{Global State} = \sum \text{Node States} + \sum \text{Channel States}$$
+
+If the system ever restores from this snapshot:
+
+1. $P_1$ loads its pre-$m_{21}$ state.
+2. $P_2$ loads its post-send state.
+3. Channel $c_{21}$ replays its recorded message, delivering $m_{21}$ to $P_1$.
+4. $P_1$ processes $m_{21}$ upon recovery, executing the state transition now.
+
+If $P_1$'s snapshot had updated its local memory *and* $m_{21}$ was recorded in channel state, restoring from the snapshot would execute $m_{21}$ twice. Leaving the transition out of $P_1$'s memory is what keeps the cut consistent.
+</details>
+
 ---
 
 ## Step-by-Step Trace: A Three-Node Token Ring

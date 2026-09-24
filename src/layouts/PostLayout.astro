@@ -239,6 +239,51 @@ const breadcrumbSchema = JSON.stringify({
         list-style-type: lower-alpha;
     }
 
+    /* Table styling */
+    .post-content :global(table) {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .post-content :global(th),
+    .post-content :global(td) {
+        padding: 0.65rem 1rem;
+        border: 1px solid var(--color-border);
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .post-content :global(th) {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        background-color: var(--color-surface);
+        color: var(--color-text);
+    }
+
+    .post-content :global(tbody tr:nth-child(even)) {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    :root[data-theme="dark"] .post-content :global(tbody tr:nth-child(even)) {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .post-content :global(details table) {
+        margin: 1rem 0;
+        font-size: 0.9rem;
+    }
+
+    .post-content :global(details th) {
+        background-color: var(--color-bg);
+    }
+
+    .post-content :global(details tbody tr:nth-child(even)) {
+        background-color: var(--color-bg);
+    }
+
     .post-content :global(h2),
     .post-content :global(h3) {
         margin-top: 2.5rem;
@@ -291,6 +336,7 @@ const breadcrumbSchema = JSON.stringify({
         border-radius: 0 6px 6px 0;
         padding: 1rem 1.25rem;
         margin: 1.5rem 0;
+        overflow-x: auto;
     }
 
     .post-content :global(details summary) {
