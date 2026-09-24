@@ -80,54 +80,50 @@ const breadcrumbSchema = JSON.stringify({
 });
 ---
 
-<BaseLayout
-    title={post.data.title}
-    description={post.data.description}
-    ogType="article"
->
+<BaseLayout title={post.data.title} description={post.data.description} ogType="article">
     <script is:inline type="application/ld+json" set:html={articleSchema} />
     <script is:inline type="application/ld+json" set:html={breadcrumbSchema} />
     <div class={`post-layout ${hasToc ? "" : "no-toc"}`}>
         <header class="post-header">
-            <a href="/blog" class="back-link">
-                ← All Posts
-            </a>
-            {post.data.series && (
-                <div class="post-series-meta">
-                    Part of the{" "}
-                    <a href={`/blog/${post.data.series}`}>
-                        {seriesTitle || post.data.series}
-                    </a>{" "}
-                    series
-                </div>
-            )}
+            <a href="/blog" class="back-link"> ← All Posts </a>
+            {
+                post.data.series && (
+                    <div class="post-series-meta">
+                        Part of the{" "}
+                        <a href={`/blog/${post.data.series}`}>{seriesTitle || post.data.series}</a>{" "}
+                        series
+                    </div>
+                )
+            }
             <h1>{post.data.title}</h1>
             <PostMeta
                 publishDate={post.data.publishDate}
                 readingTime={readingTime}
                 draft={post.data.draft}
             />
-            {post.data.tags && post.data.tags.length > 0 && (
-                <div class="post-tags">
-                    {post.data.tags.map((tag) => (
-                        <span class="tag-pill">#{tag}</span>
-                    ))}
-                </div>
-            )}
+            {
+                post.data.tags && post.data.tags.length > 0 && (
+                    <div class="post-tags">
+                        {post.data.tags.map((tag) => (
+                            <span class="tag-pill">#{tag}</span>
+                        ))}
+                    </div>
+                )
+            }
         </header>
 
-        {hasToc && (
-            <aside class="post-sidebar">
-                <TableOfContents headings={headings} />
-            </aside>
-        )}
+        {
+            hasToc && (
+                <aside class="post-sidebar">
+                    <TableOfContents headings={headings} />
+                </aside>
+            )
+        }
 
         <article class="post-content">
             <slot />
 
-            {post.data.series && (
-                <SeriesNav prev={prev} next={next} />
-            )}
+            {post.data.series && <SeriesNav prev={prev} next={next} />}
         </article>
     </div>
 </BaseLayout>
@@ -209,6 +205,38 @@ const breadcrumbSchema = JSON.stringify({
     /* Make sure spacing is nice inside markdown posts */
     .post-content :global(p) {
         margin-bottom: 1.5rem;
+    }
+
+    /* List spacing and nested list alignment */
+    .post-content :global(ul),
+    .post-content :global(ol) {
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
+        padding-left: 1.75rem;
+    }
+
+    .post-content :global(li) {
+        margin-bottom: 0.4rem;
+        line-height: 1.75;
+    }
+
+    .post-content :global(li > ul),
+    .post-content :global(li > ol) {
+        margin-top: 0.35rem;
+        margin-bottom: 0.35rem;
+        padding-left: 1.5rem;
+    }
+
+    .post-content :global(ul ul) {
+        list-style-type: circle;
+    }
+
+    .post-content :global(ul ul ul) {
+        list-style-type: square;
+    }
+
+    .post-content :global(ol ol) {
+        list-style-type: lower-alpha;
     }
 
     .post-content :global(h2),

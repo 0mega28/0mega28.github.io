@@ -106,3 +106,23 @@ code {
     background: var(--color-surface);
     opacity: 1 !important;
 }
+
+/* Mermaid Diagram Container styling */
+pre.mermaid,
+div.mermaid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+pre.mermaid svg,
+div.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
