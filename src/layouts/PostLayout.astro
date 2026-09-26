@@ -169,7 +169,8 @@ const breadcrumbSchema = JSON.stringify({
             "header"
             "toc"
             "content";
-        grid-template-columns: 100%;
+        /* minmax(0, ...) so wide children (e.g. unrendered mermaid source) can't stretch the column */
+        grid-template-columns: minmax(0, 1fr);
         gap: 1.5rem;
     }
 
@@ -306,7 +307,7 @@ const breadcrumbSchema = JSON.stringify({
 
     @media (min-width: 900px) {
         .post-layout:not(.no-toc) {
-            grid-template-columns: 1fr 280px;
+            grid-template-columns: minmax(0, 1fr) 280px;
             grid-template-areas:
                 "header header"
                 "content toc";

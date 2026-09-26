@@ -138,6 +138,13 @@ div.mermaid {
     overflow-x: auto;
 }
 
+/* Hide the raw diagram source until astro-mermaid renders it (it sets data-processed on success and error) */
+pre.mermaid:not([data-processed]) {
+    display: block;
+    color: transparent;
+    overflow: hidden;
+}
+
 pre.mermaid svg,
 div.mermaid svg {
     max-width: 100%;
