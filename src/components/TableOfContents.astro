@@ -3,32 +3,51 @@ import type { MarkdownHeading } from "astro";
 
 interface Props {
     headings: MarkdownHeading[];
+    /** Clean per-heading HTML labels from remark-toc-labels, in document order. */
+    labels?: string[];
 }
 
-const { headings } = Astro.props;
+const { headings, labels } = Astro.props;
+
+// Labels line up with headings only if both saw the same set; otherwise fall back to Astro's text.
+const useLabels = labels?.length === headings.length;
 
 // Filter to h2 and h3 headings for Table of Contents
-const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const tocHeadings = headings
+    .map((h, i) => ({ ...h, label: useLabels ? labels![i] : undefined }))
+    .filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 {
     tocHeadings.length > 0 && (
         <nav class="toc-container" aria-label="Table of contents">
-            <div class="toc-title">Table of Contents</div>
-            <ul class="toc-list">
-                {tocHeadings.map((heading) => (
-                    <li class={`toc-item depth-${heading.depth}`}>
-                        <a href={`#${heading.slug}`}>{heading.text}</a>
-                    </li>
-                ))}
-            </ul>
+            <details class="toc-details">
+                <summary class="toc-title">Table of Contents</summary>
+                <ul class="toc-list">
+                    {tocHeadings.map((heading) => (
+                        <li class={`toc-item depth-${heading.depth}`}>
+                            {heading.label ? (
+                                <a href={`#${heading.slug}`} set:html={heading.label} />
+                            ) : (
+                                <a href={`#${heading.slug}`}>{heading.text}</a>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            </details>
+            {/* Runs during parse so the desktop sidebar is open on first paint; mobile stays collapsed. */}
+            <script is:inline>
+                if (matchMedia("(min-width: 900px)").matches) {
+                    document.currentScript.previousElementSibling.open = true;
+                }
+            </script>
         </nav>
     )
 }
 
 <style>
     .toc-container {
-        padding: 1.5rem;
+        padding: 1rem 1.25rem;
         border: 1px solid var(--color-border);
         border-radius: 8px;
         background: var(--color-surface);
@@ -41,13 +60,39 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
     }
 
     .toc-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        list-style: none;
         font-size: 0.75rem;
         font-family: var(--font-heading);
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: var(--color-muted);
-        margin-bottom: 1rem;
         font-weight: 600;
+    }
+
+    .toc-title::-webkit-details-marker {
+        display: none;
+    }
+
+    .toc-title::after {
+        content: "";
+        width: 0.45rem;
+        height: 0.45rem;
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: translateY(-25%) rotate(45deg);
+        transition: transform 0.2s;
+    }
+
+    .toc-details[open] > .toc-title {
+        margin-bottom: 1rem;
+    }
+
+    .toc-details[open] > .toc-title::after {
+        transform: translateY(25%) rotate(-135deg);
     }
 
     .toc-list {
@@ -82,5 +127,11 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
     .toc-item a:hover {
         color: var(--color-accent);
+    }
+
+    @media (min-width: 900px) {
+        .toc-container {
+            padding: 1.5rem;
+        }
     }
 </style>

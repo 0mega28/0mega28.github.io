@@ -75,11 +75,12 @@ const props = Astro.props;
     props.type === "post"
         ? (() => {
               const { post, prev, next, seriesTitle } = props;
-              return render(post).then(({ Content, headings }) => {
+              return render(post).then(({ Content, headings, remarkPluginFrontmatter }) => {
                   return (
                       <PostLayout
                           post={post}
                           headings={headings}
+                          tocLabels={remarkPluginFrontmatter.tocLabels}
                           seriesTitle={seriesTitle}
                           prev={prev}
                           next={next}

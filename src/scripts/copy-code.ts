@@ -3,7 +3,13 @@ function setupCopyButtons() {
 
     codeBlocks.forEach((block) => {
         // Avoid duplicate buttons
-        if (block.querySelector(".copy-code-button")) return;
+        if (block.parentElement?.classList.contains("code-block")) return;
+
+        // Wrap the <pre> so the button stays pinned while wide code scrolls horizontally
+        const wrapper = document.createElement("div");
+        wrapper.className = "code-block";
+        block.before(wrapper);
+        wrapper.appendChild(block);
 
         const button = document.createElement("button");
         button.className = "copy-code-button";
@@ -34,7 +40,7 @@ function setupCopyButtons() {
             }
         });
 
-        block.appendChild(button);
+        wrapper.appendChild(button);
     });
 }
 

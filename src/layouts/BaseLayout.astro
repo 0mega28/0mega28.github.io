@@ -193,10 +193,12 @@ const websiteSchema = isHomePage
         color: var(--color-accent);
     }
 
+    /* Links carry their own padding so each icon is a ~36px tap target on phones */
     nav {
         display: flex;
-        gap: 1.25rem;
+        gap: 0.25rem;
         flex-wrap: wrap;
+        margin: 0 -0.5rem;
     }
 
     nav a {
@@ -208,6 +210,7 @@ const websiteSchema = isHomePage
         transition: color 0.15s;
         display: flex;
         align-items: center;
+        padding: 0.5rem;
     }
 
     nav a:hover {
@@ -244,7 +247,7 @@ const websiteSchema = isHomePage
         border: none;
         color: var(--color-muted);
         cursor: pointer;
-        padding: 0;
+        padding: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;

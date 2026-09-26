@@ -28,6 +28,16 @@ code {
     border: 1px solid var(--color-border);
 }
 
+/* Wrapper added by copy-code.ts; positions the copy button outside the scroll area */
+.code-block {
+    position: relative;
+    margin: 1.5rem 0;
+}
+
+.code-block > .astro-code {
+    margin: 0;
+}
+
 /* Code layout for line highlighting and copy button container */
 .astro-code code {
     display: grid;
@@ -87,10 +97,17 @@ code {
     user-select: none;
 }
 
-/* Show button on hover of the pre block */
-.astro-code:hover .copy-code-button,
-.copy-code-button:focus {
+/* Show button on hover of the code block */
+.code-block:hover .copy-code-button,
+.copy-code-button:focus-visible {
     opacity: 0.9;
+}
+
+/* Touch screens have no hover, so keep the button visible */
+@media (hover: none) {
+    .copy-code-button {
+        opacity: 0.9;
+    }
 }
 
 .copy-code-button:hover {

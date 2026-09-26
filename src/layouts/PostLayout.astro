@@ -11,12 +11,13 @@ import type { MarkdownHeading } from "astro";
 interface Props {
     post: CollectionEntry<"blog">;
     headings: MarkdownHeading[];
+    tocLabels?: string[];
     seriesTitle?: string;
     prev: { id: string; title: string } | null;
     next: { id: string; title: string } | null;
 }
 
-const { post, headings, seriesTitle, prev, next } = Astro.props;
+const { post, headings, tocLabels, seriesTitle, prev, next } = Astro.props;
 const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 const readingTime = getReadingTime(post.body || "");
 
@@ -115,7 +116,7 @@ const breadcrumbSchema = JSON.stringify({
         {
             hasToc && (
                 <aside class="post-sidebar">
-                    <TableOfContents headings={headings} />
+                    <TableOfContents headings={headings} labels={tocLabels} />
                 </aside>
             )
         }
@@ -202,6 +203,11 @@ const breadcrumbSchema = JSON.stringify({
         line-height: 1.8;
     }
 
+    /* Bare URLs (e.g. in References) are one unbreakable word and widen the page on phones */
+    .post-content :global(a) {
+        overflow-wrap: anywhere;
+    }
+
     /* Make sure spacing is nice inside markdown posts */
     .post-content :global(p) {
         margin-bottom: 1.5rem;
@@ -246,6 +252,14 @@ const breadcrumbSchema = JSON.stringify({
         margin: 1.5rem 0;
         font-size: 0.95rem;
         line-height: 1.6;
+    }
+
+    /* On narrow screens let wide tables scroll instead of overflowing the column */
+    @media (max-width: 640px) {
+        .post-content :global(table) {
+            display: block;
+            overflow-x: auto;
+        }
     }
 
     .post-content :global(th),

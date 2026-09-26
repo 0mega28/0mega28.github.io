@@ -6,13 +6,14 @@ import mermaid from "astro-mermaid";
 import { transformerMetaHighlight } from "@shikijs/transformers";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import remarkTocLabels from "./src/plugins/remark-toc-labels.mjs";
 
 // https://astro.build/config
 export default defineConfig({
     site: "https://0mega28.github.io",
     integrations: [mermaid(), icon(), sitemap()],
     markdown: {
-        remarkPlugins: [remarkMath],
+        remarkPlugins: [remarkMath, remarkTocLabels],
         rehypePlugins: [rehypeKatex],
         shikiConfig: {
             themes: {
