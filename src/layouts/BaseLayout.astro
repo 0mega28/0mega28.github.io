@@ -65,9 +65,12 @@ const websiteSchema = isHomePage
         <Font cssVariable="--font-heading" preload />
         <Font cssVariable="--font-mono" />
         <title>{title}</title>
+        <!-- Raster icons are sized multiples of 48px with an opaque background, as Google Search requires -->
+        <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" type="image/png" href="/favicon.png" />
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="alternate" type="application/rss+xml" title={`${SITE_TITLE}'s Blog`} href="/rss.xml" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous" />
         {websiteSchema && <script is:inline type="application/ld+json" set:html={websiteSchema} />}
