@@ -7,9 +7,6 @@
 }
 
 :root {
-    --font-body: "Lora", Georgia, serif;
-    --font-heading: "Outfit", system-ui, sans-serif;
-    --font-mono: "JetBrains Mono", monospace;
     --color-text: #1a1a1a;
     --color-muted: #555;
     --color-border: #e2e8f0;
@@ -70,21 +67,6 @@ h3 {
 
 p {
     margin-bottom: 1.25rem;
-}
-
-main {
-    animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 .subheadline {
