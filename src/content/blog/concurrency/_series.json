@@ -1,0 +1,4 @@
+{
+    "title": "Concurrency",
+    "description": "Building concurrent data structures and systems, and the places where designs that look right on paper break once threads interleave."
+}
