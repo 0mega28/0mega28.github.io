@@ -179,4 +179,4 @@ The full store, with a demo that runs the batch-atomicity check, is on GitHub<su
 
 <span id="ref-3">[3]</span> Oracle, *java.util.concurrent package summary: Memory Consistency Properties*. [https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
 
-<span id="ref-4">[4]</span> Saksham Gupta, *mvcc-kv-store*. [https://github.com/0mega28/mvcc-kv-store](https://github.com/0mega28/mvcc-kv-store)
+<span id="ref-4">[4]</span> Saksham Gupta, *lld-deep-dives: mvcc-kv-store*. [https://github.com/0mega28/lld-deep-dives/tree/main/mvcc-kv-store](https://github.com/0mega28/lld-deep-dives/tree/main/mvcc-kv-store)
